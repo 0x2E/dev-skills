@@ -13,13 +13,37 @@ Before starting, you must have:
 1. **Planning output** — milestone-grouped task list with dependency annotations
 2. **Workflow-selector decision** — which tasks use TDD, which don't
 
+## Git Environment Check
+
+Before starting execution, determine the commit strategy to avoid accumulating an uncommitted blob of changes:
+
+1. Is this a git repository? Check: `git rev-parse --git-dir 2>/dev/null`
+
+2. If **not a git repo**: Ask the user: "This is not a git repository. Do you want me to initialize one and commit as we go?"
+
+3. If **is a git repo**, check whether this is a git worktree:
+   - Run `git rev-parse --git-path HEAD` — if the `HEAD` file path is outside `.git/`, run `git worktree list` to confirm
+   - Or check: `test -f .git && echo "worktree"` (worktrees have `.git` as a file, not a directory)
+
+4. Commit strategy:
+
+   | Environment | Strategy |
+   |------------|----------|
+   | **Git worktree** | Require a commit after **each task** completes. The implementer subagent must stage and commit their changes before returning. If a milestone groups multiple tasks, also commit after the milestone. |
+   | **Main branch** (regular repo) | Ask the user: "You are on `main`. Should I create a feature branch and commit as we go, or proceed without commits?" |
+   | **Feature branch** (regular repo, not worktree) | Ask the user: "Should I commit after each task, after each milestone, or do you prefer to commit yourself?" |
+   | **Not a git repo** | Follow user's answer from step 2. |
+
+5. **Rationale**: Committing per task or milestone produces a clean, reviewable history. Accumulating all changes into one big commit obscures the progression of the work and makes review and rollback harder.
+
 ## Scheduling Rules
 
 **All tasks execute serially. Never dispatch multiple implementer subagents in parallel.**
 
 ```mermaid
 flowchart TD
-    START([Start]) --> NEXT_MS[Next Milestone]
+    START([Start]) --> GIT_CHECK[Git environment check]
+    GIT_CHECK --> NEXT_MS[Next Milestone]
     NEXT_MS --> NEXT_TASK[Next Task]
     NEXT_TASK --> DISPATCH[Dispatch implementer subagent]
     DISPATCH --> TDD_CHECK{TDD enabled?}
@@ -28,9 +52,12 @@ flowchart TD
     TDD_FLOW --> IMPL
     IMPL --> VG[Run verification-gate]
     VG --> VG_PASS{Pass?}
-    VG_PASS -->|No| FIX[Implementer fixes]
+    VG_PASS -->|No| VG_COUNT{Retry count<br>&lt; 3?}
+    VG_COUNT -->|Yes| FIX[Implementer fixes]
     FIX --> VG
-    VG_PASS -->|Yes| MORE_TASKS{More tasks in<br>this milestone?}
+    VG_COUNT -->|No| VG_FLAG[Flag for human<br>decision]
+    VG_PASS -->|Yes| COMMIT[Commit changes<br>if required]
+    COMMIT --> MORE_TASKS{More tasks in<br>this milestone?}
     MORE_TASKS -->|Yes| NEXT_TASK
     MORE_TASKS -->|No| CP_REVIEW[Checkpoint code-review]
     CP_REVIEW --> CP_PASS{Review pass?}
@@ -66,10 +93,14 @@ Craft the implementer prompt with these elements:
 ## TDD Instructions (if enabled)
 {Include the tdd skill instructions: red → green → refactor cycle}
 
+## Commit Instructions (if enabled by git environment check)
+{If commits are required: Stage all changed files, write a concise commit message summarizing the task, and commit before returning. Follow the existing commit message convention (check `git log --oneline` for the repo's style).}
+
 ## Output Requirements
 - Complete the implementation
 - Run verification (tests, lint, build)
-- Return: summary of changes + issues encountered + verification result
+- Commit changes (if required)
+- Return: summary of changes + issues encountered + verification result + commit SHA (if committed)
 ```
 
 ### Prompt Crafting Principles
@@ -121,6 +152,8 @@ Do not pause between tasks to check in with the user. Execute all tasks without 
 - **Never skip review** — checkpoint or final
 - **Max one re-review loop** — flag for human after that
 - **Subagents do not read the plan** — provide curated context, but subagents self-gather source files
+- **Commit per task in git worktrees** — avoid accumulating uncommitted changes
+- **Max 3 verification-gate retries** — if a task fails verification 3 times in a row, flag for human decision
 
 ## Tool Mapping
 

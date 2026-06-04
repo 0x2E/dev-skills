@@ -10,7 +10,20 @@ Transform design documents into a structured, executable task list with mileston
 ## Process
 
 ### 1. Read Input
-Consume the design document produced by brainstorming (Spec / PRD / ADR). Understand the full scope.
+
+Consume the design. Two paths are supported:
+
+**Path A — From file** (preferred when available):
+- If a design doc exists (Spec / PRD / ADR), read it directly
+- Ask the user for the file path if not obvious
+
+**Path B — From conversation context** (when no file exists):
+- If the design was kept inline by brainstorming (no persisted file), extract it from the current session's conversation history
+- Confirm with the user: "I'll extract the design from our conversation. Let me know if I miss anything."
+- Summarize what you extracted before proceeding to decomposition
+
+If neither a file nor conversation context contains a design:
+- Ask the user: "What should this implementation achieve? Describe the scope, key features, and constraints."
 
 ### 2. Decompose
 Break the design into modules and tasks. Identify natural grouping boundaries (e.g., data layer → API layer → frontend). These become milestones.
@@ -55,4 +68,5 @@ Ask: "Proceed to workflow selection?" Do NOT force transition.
 
 | Generic Term | Description |
 |-------------|-------------|
-| Read file | Read design doc from brainstorming |
+| Read file | Read design doc file (if persisted) |
+| Conversation context | Extract design from current session history (if inline) |

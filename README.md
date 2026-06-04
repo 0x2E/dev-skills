@@ -25,7 +25,10 @@ A lightweight, loosely-coupled, harness-agnostic set of development workflow ski
 ## Default Workflow
 
 ```
-dev-flow → brainstorming → planning → workflow-selector → subagent-execution → code-review → verification-gate
+dev-flow → brainstorming → planning → workflow-selector → subagent-execution
+                                                          (per-task verification-gate,
+                                                           per-milestone code-review,
+                                                           final global code-review)
 ```
 
 Each step asks before proceeding to the next. All skills can also be invoked independently.

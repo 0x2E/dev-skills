@@ -26,9 +26,9 @@ When a user indicates they want to build something (new feature, significant cha
 ```mermaid
 flowchart LR
     B[brainstorming] --> P[planning] --> W[workflow-selector] --> S[subagent-execution]
-    S --> C[code-review] --> V[verification-gate]
+    S -->|all complete| C[code-review]
     S -.->|per milestone| C
-    S -.->|if TDD enabled| T[tdd]
+    S -.->|per task| V[verification-gate]
 ```
 
 Each step asks the user whether to proceed to the next. No step is forced.
