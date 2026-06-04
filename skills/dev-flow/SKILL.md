@@ -23,8 +23,12 @@ Entry router for the dev-skills system. Provides a skill index, orchestrates the
 
 When a user indicates they want to build something (new feature, significant change), guide them through this chain:
 
-```
-brainstorming → planning → workflow-selector → subagent-execution → code-review → verification-gate
+```mermaid
+flowchart LR
+    B[brainstorming] --> P[planning] --> W[workflow-selector] --> S[subagent-execution]
+    S --> C[code-review] --> V[verification-gate]
+    S -.->|per milestone| C
+    S -.->|if TDD enabled| T[tdd]
 ```
 
 Each step asks the user whether to proceed to the next. No step is forced.

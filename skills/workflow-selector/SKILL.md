@@ -54,18 +54,9 @@ Document the chosen workflow. This will be consumed by subagent-execution as con
 - Which tasks/milestones use TDD?
 - Review strategy (already fixed: checkpoint + final)
 
-## TDD Applicability Reference
+## TDD Applicability
 
-| Task Type | TDD Recommended? |
-|-----------|-----------------|
-| Backend logic / services | Yes |
-| Data processing / transforms | Yes |
-| API endpoints | Yes |
-| Utility / helper functions | Yes |
-| Frontend core methods (state, data) | Yes |
-| Frontend page components | No |
-| Styles / layouts | No |
-| Config / dependency changes | No |
+See the `tdd` skill for detailed guidance on when TDD applies. Use that reference to classify each task as TDD-enabled or TDD-skipped.
 
 ## Tool Mapping
 

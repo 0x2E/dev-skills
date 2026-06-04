@@ -17,30 +17,34 @@ Before starting, you must have:
 
 **All tasks execute serially. Never dispatch multiple implementer subagents in parallel.**
 
+```mermaid
+flowchart TD
+    START([Start]) --> NEXT_MS[Next Milestone]
+    NEXT_MS --> NEXT_TASK[Next Task]
+    NEXT_TASK --> DISPATCH[Dispatch implementer subagent]
+    DISPATCH --> TDD_CHECK{TDD enabled?}
+    TDD_CHECK -->|Yes| TDD_FLOW[Include tdd skill in prompt]
+    TDD_CHECK -->|No| IMPL[Implement directly]
+    TDD_FLOW --> IMPL
+    IMPL --> VG[Run verification-gate]
+    VG --> VG_PASS{Pass?}
+    VG_PASS -->|No| FIX[Implementer fixes]
+    FIX --> VG
+    VG_PASS -->|Yes| MORE_TASKS{More tasks in<br>this milestone?}
+    MORE_TASKS -->|Yes| NEXT_TASK
+    MORE_TASKS -->|No| CP_REVIEW[Checkpoint code-review]
+    CP_REVIEW --> CP_PASS{Review pass?}
+    CP_PASS -->|Yes| MORE_MS{More milestones?}
+    CP_PASS -->|No| CP_FIX[Dispatch implementer to fix]
+    CP_FIX --> CP_REREVIEW[Re-review once]
+    CP_REREVIEW --> CP_RPASS{Still fail?}
+    CP_RPASS -->|Yes| FLAG[Flag for human decision]
+    CP_RPASS -->|No| MORE_MS
+    MORE_MS -->|Yes| NEXT_MS
+    MORE_MS -->|No| FINAL_REVIEW[Final global code-review]
+    FINAL_REVIEW --> DONE([Done])
 ```
-For each Milestone (in order):
-  │
-  ├─ For each Task within Milestone (in order):
-  │    │
-  │    ├─ 1. Dispatch implementer subagent
-  │    │    ├─ If TDD enabled for this task → include tdd skill instructions in prompt
-  │    │    └─ If TDD not enabled → instruct to implement directly
-  │    │
-  │    ├─ 2. Implementer completes → run verification-gate
-  │    │    ├─ Tests/lint/build pass → proceed
-  │    │    └─ Failures → implementer fixes → re-verify (one retry, then flag)
-  │    │
-  │    └─ 3. Task marked complete → next task
-  │
-  ├─ Milestone fully complete → checkpoint code-review
-  │    ├─ Review passes → next Milestone
-  │    └─ Review has issues:
-  │         ├─ Dispatch implementer to fix
-  │         ├─ Re-review (max one re-review loop)
-  │         └─ Still failing → flag for human decision
-  │
-  └─ All Milestones complete → final global code-review
-```
+
 
 ## Implementer Subagent Prompt
 
@@ -70,7 +74,8 @@ Craft the implementer prompt with these elements:
 
 ### Prompt Crafting Principles
 
-- **Self-contained**: subagent gets all context it needs; it does NOT read the plan file
+- **Essential context upfront**: subagent receives task description, design context, file paths, and acceptance criteria. It does NOT need to read the full plan/spec.
+- **Self-gather for details**: the subagent should read source files, explore the codebase, and look up conventions on its own as needed. The parent does not need to pre-package every file.
 - **Focused**: one clear task, not "fix everything"
 - **Constrained**: specify what NOT to change if relevant
 - **Specific output**: tell the subagent exactly what to return
@@ -82,7 +87,7 @@ When an implementer subagent returns:
 | Status | Action |
 |--------|--------|
 | **Done** | Proceed to verification-gate |
-| **Needs context** | Provide missing info and re-dispatch |
+| **Needs context** | Provide the missing info (or point to the file to read) and re-dispatch. Do not pre-read and summarize unless the subagent explicitly needs interpretation |
 | **Blocked** | Assess: missing context? task too large? plan wrong? — resolve or escalate |
 | **Concerns raised** | Read concerns, address if critical, otherwise note and proceed |
 
@@ -115,7 +120,7 @@ Do not pause between tasks to check in with the user. Execute all tasks without 
 - **Always verification-gate** after each task before claiming complete
 - **Never skip review** — checkpoint or final
 - **Max one re-review loop** — flag for human after that
-- **Subagents never read the plan** — provide full context in the prompt
+- **Subagents do not read the plan** — provide curated context, but subagents self-gather source files
 
 ## Tool Mapping
 

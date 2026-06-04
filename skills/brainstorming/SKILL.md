@@ -31,12 +31,28 @@ Before finalizing, review the design internally:
 Fix issues before presenting to the user.
 
 ### 6. Produce Documentation
-When the design is confirmed:
+
+First, decide whether the design warrants a persisted document:
+
+| Persist to file | Keep in context only |
+|----------------|---------------------|
+| New feature or module | Bug fix (even with design discussion) |
+| Architectural change (ADR) | Small refactor with limited scope |
+| Multi-session or multi-person work | Single-session work |
+| Product requirement (PRD) | Configuration or dependency change |
+| Complex design with multiple approaches | Trivial or obvious implementation |
+
+If persisting is appropriate:
 
 - Ask: **Where should the doc be saved?** and **What naming convention to use?**
 - If AGENTS.md doesn't define doc location/naming, suggest: "Should I add these conventions to AGENTS.md for future sessions?"
 - Generate the long-lived doc: **Spec** (feature specifications), **PRD** (product requirements), or **ADR** (architecture decisions) depending on context
 - Only save after user confirmation
+
+If keeping in context only:
+- Summarize the confirmed design in the conversation
+- Pass the summary forward to planning as an inline description (no file written)
+- The design lives in the session's conversation history
 
 ### 7. Transition
 Ask: "Proceed to planning?" Do NOT force transition.
@@ -48,6 +64,8 @@ Ask: "Proceed to planning?" Do NOT force transition.
 | Spec | New feature or module, detailed technical specification |
 | PRD | Product-level feature, user-facing requirements |
 | ADR | Architectural decision, trade-off documentation |
+| Inline (no file) | Bug fix, small refactor, config change — design kept in conversation context |
+
 
 ## Key Principles
 

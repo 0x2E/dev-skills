@@ -13,6 +13,20 @@ Dispatch a reviewer subagent to evaluate code and produce a structured review re
 2. **Final Global Review** — after all milestones complete (invoked by subagent-execution)
 3. **Manual trigger** — user invokes directly via `/review` or instruction
 
+## Review Target
+
+Always determine the review target explicitly before dispatching the reviewer:
+
+| Trigger | Review Target |
+|---------|--------------|
+| Checkpoint Review | Diff between the Milestone's first and last commit |
+| Final Global Review | Diff between feature branch HEAD and base branch (e.g., `main`) |
+| Manual: PR review | `git diff base...HEAD` (the PR's changes) |
+| Manual: uncommitted work | `git diff` + untracked files |
+| Manual: specific file/dir | User specifies; scope is only those files |
+
+If the target is unclear, ask the user: "What should I review — uncommitted changes, a specific branch, or a PR?"
+
 ## Reviewer Subagent Prompt
 
 Craft the reviewer prompt with these elements:
@@ -49,10 +63,9 @@ When receiving review feedback:
    - Uncertain → ask user
    - Wrong or inapplicable → push back with technical reasoning
 
-## Review Loop
+## Report Consumption
 
-- Subagent-execution dispatches fixes → re-triggers review (max one re-review loop)
-- Still failing after re-review → flag for human decision
+The reviewer subagent returns a structured report. This report is consumed by the caller (subagent-execution or the user), who decides what to do with it.
 
 ## Tool Mapping
 
