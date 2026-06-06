@@ -13,7 +13,7 @@ Superpowers is a comprehensive AI Coding workflow Skills collection, but it has 
 ## 2. Design Principles
 
 1. **Neutral terminology** — Use generic terms in skill bodies, avoiding harness-specific tool names. Each Skill includes a "Tool Mapping" glossary section at the end
-2. **Loose coupling + chainable** — Each Skill can be invoked independently or chained through the entry point Skill into a full workflow
+2. **Componentized skills + strong orchestration** — Each Skill can be invoked independently or chained through the devflow orchestrator into a reliable full workflow without per-step confirmations
 3. **Conciseness first** — Each SKILL.md stays at a reasonable length, retaining only essential logic
 4. **Fully manual trigger** — The entry point Skill is not auto-injected via hooks; users trigger it on demand
 5. **Docs on demand** — Long-lived docs (Spec/PRD/ADR) are saved only after user confirmation; no auto-generated temporary plans
@@ -22,46 +22,47 @@ Superpowers is a comprehensive AI Coding workflow Skills collection, but it has 
 
 | # | Skill | Filename | Role | Responsibility |
 |---|-------|----------|------|----------------|
-| 0 | Entry Router | `dev-flow/SKILL.md` | Entry | Skill index + workflow orchestration + routing |
+| 0 | Entry Router | `devflow/SKILL.md` | Entry | Skill index + workflow orchestration + routing |
 | 1 | Brainstorming | `brainstorming/SKILL.md` | Core | Requirements discussion → design confirmation → long-lived docs |
-| 2 | Planning | `planning/SKILL.md` | Core | Design doc → milestone-grouped task list |
-| 3 | Workflow Selector | `workflow-selector/SKILL.md` | Core | Analyze complexity, present TDD+Review combos for user selection |
-| 4 | Subagent Execution | `subagent-execution/SKILL.md` | Core | Serial milestone execution with checkpoint reviews |
-| 5 | Code Review | `code-review/SKILL.md` | Core | Pure review (output report, no fixing) |
-| 6 | Verification Gate | `verification-gate/SKILL.md` | Checkpoint | Run commands, see output, then claim completion |
-| 7 | TDD | `tdd/SKILL.md` | Sub-flow | Red-Green-Refactor cycle, invoked on-demand by subagent-execution |
+| 2 | Planning | `planning/SKILL.md` | Core | Design doc → milestone-grouped task list + execution strategy |
+| 3 | Subagent Execution | `subagent-execution/SKILL.md` | Core | Serial milestone execution with checkpoint reviews |
+| 4 | Code Review | `code-review/SKILL.md` | Core | Pure review (output report, no fixing) |
+| 5 | Verification Gate | `verification-gate/SKILL.md` | Checkpoint | Run commands, see output, then claim completion |
+| 6 | TDD | `tdd/SKILL.md` | Sub-flow | Red-Green-Refactor cycle, invoked on-demand by subagent-execution |
 
 ## 4. Default Workflow Chain
 
 ```
-User manually triggers dev-flow
+User manually triggers devflow
     ↓
-brainstorming → planning → workflow-selector → subagent-execution → code-review → verification-gate
-    ↓                ↓                      ↓                    ↓                    ↓
-Discuss reqs /    Break into             Present TDD+Review   Serial execution +    Final global review   Run commands
-design → produce  milestone groups       combos for user      milestone             (pure review,          to verify
-long-lived docs   (with deps)            selection             checkpoint review     no fixing)
-(Spec/PRD/ADR)
-                                              ↓ (if TDD enabled)
-                                            tdd (red-green-refactor cycle)
+brainstorming → planning → subagent-execution
+    ↓                ↓                    ↓
+Discuss reqs /    Break into             Serial execution +
+design → produce  milestone groups       milestone
+long-lived docs   + execution strategy    checkpoint review
+(Spec/PRD/ADR)   (with deps, mode, TDD)
+                                            ↓ (if TDD enabled)
+                                          tdd (red-green-refactor cycle)
 ```
 
 Each Skill can be invoked independently via slash command or direct instruction, bypassing the entry point.
 
 ## 5. Detailed Skill Designs
 
-### 5.1 Entry Router (dev-flow)
+### 5.1 Entry Router (devflow)
 
 **Responsibility**: Skill index + workflow orchestration + routing.
 
 **Content structure**:
 - Skill inventory table (name + one-liner only, no detailed capabilities)
 - Default workflow diagram (simplified)
-- Independent invocation guide
+- **Orchestration Mode**: Auto-drive the full chain (brainstorming → planning → subagent-execution) without per-step user confirmations. User can interrupt or skip at any time.
+- Routing table (for when user intent is unclear)
 - Tool mapping table
 
 **Key difference from Superpowers**:
 - Not auto-injected via hooks; fully manual trigger
+- Powerful orchestrator — drives the full chain without stopping to ask "proceed?", but user retains full interrupt control
 - Routing only, never duplicates sub-skill content (avoids drift)
 
 ---
@@ -71,7 +72,7 @@ Each Skill can be invoked independently via slash command or direct instruction,
 **Responsibility**: Discuss requirements with user, form design, produce long-lived project docs (Spec / PRD / ADR).
 
 **Flow**:
-1. Understand project context
+1. Understand **relevant** context — focus only on modules/files related to the feature being discussed, not the entire project
 2. Ask questions one at a time — clarify requirements, constraints, success criteria
 3. Propose 2-3 approaches with trade-offs and a recommendation
 4. Design confirmation: present design to user → Self Review (check placeholders/contradictions/scope/ambiguity) → user confirmation
@@ -79,81 +80,69 @@ Each Skill can be invoked independently via slash command or direct instruction,
    - Ask for **storage path** and **naming convention**
    - If AGENTS.md doesn't define these, suggest writing them into AGENTS.md
    - Generate long-lived doc after user confirmation
-6. Ask user whether to proceed to planning
 
 **Key differences from Superpowers**:
 - Visual Companion removed
 - Docs not forced to a fixed path; saved on demand
 - Doc type not limited to Spec; supports PRD / ADR
 - Self Review retained; dual-round user review removed
-- Does not force transition to planning (loose coupling)
+- Context gathering is focused, not exhaustive — avoids waste when jumping into feature work
+- No transition handoff — devflow orchestrates the chain end-to-end
 
 ---
 
 ### 5.3 Planning (planning)
 
-**Responsibility**: Transform design docs into a milestone-grouped, executable task list.
+**Responsibility**: Transform design docs into a milestone-grouped, executable task list with execution strategy.
 
 **Output structure example**:
 ```markdown
+### Execution Strategy
+- Execution mode: Subagent / Main Session / Mixed
+- TDD: Enabled for backend logic and utility tasks
+- Review: Milestone checkpoint reviews + final global review
+
 ### Milestone 1: Data Layer
-- Task 1.1: Create database schema [depends on: none]
-- Task 1.2: Implement User model [depends on: Task 1.1]
-- Task 1.3: Implement data access layer [depends on: Task 1.2]
+- Task 1.1: Create database schema [depends on: none] [mode: subagent] [tdd: yes]
+- Task 1.2: Implement User model [depends on: Task 1.1] [mode: subagent] [tdd: yes]
+- Task 1.3: Implement data access layer [depends on: Task 1.2] [mode: subagent] [tdd: yes]
 
 ### Milestone 2: API Layer
-- Task 2.1: Implement REST routes [depends on: Milestone 1]
-- Task 2.2: Implement auth middleware [depends on: Task 2.1]
+- Task 2.1: Implement REST routes [depends on: Milestone 1] [mode: subagent] [tdd: yes]
+- Task 2.2: Implement auth middleware [depends on: Task 2.1] [mode: subagent] [tdd: yes]
 
 ### Milestone 3: Frontend
-- Task 3.1: Implement login page [depends on: Milestone 2]
-- Task 3.2: Implement Dashboard [depends on: Task 3.1]
+- Task 3.1: Implement login page [depends on: Milestone 2] [mode: subagent] [tdd: no]
+- Task 3.2: Implement Dashboard [depends on: Task 3.1] [mode: subagent] [tdd: no]
 ```
 
 **Content structure**:
 1. Read input: consume design docs from brainstorming
 2. Decompose modules, analyze dependencies, annotate milestones
-3. Output structured task list
-4. Ask user whether to proceed to workflow-selector
-5. Tool mapping
+3. Determine execution strategy: classify each task (TDD applicability, subagent vs main session mode)
+4. Present proposed strategy to user for confirmation
+5. Output structured task list with execution strategy
+6. Tool mapping
+
+**Execution mode guidance**:
+- **Subagent**: Tasks that involve multiple files, require TDD, or benefit from isolated context
+- **Main Session**: Simple tasks (config changes, small fixes, trivial updates) that are faster to do directly
 
 ---
 
-### 5.4 Workflow Selector (workflow-selector)
-
-**Responsibility**: Analyze task complexity and present TDD + Review workflow combination options to the user.
-
-**Flow**:
-```
-Read planning output (milestone task list)
-    ↓
-Analyze: backend logic? frontend UI? refactoring? config changes?
-    ↓
-Generate 2-3 workflow combos with a recommendation:
-  A. Full TDD + Subagent execution + Milestone Review + Final Review
-  B. Backend TDD + frontend core-methods TDD + Subagent execution + Milestone Review + Final Review
-  C. No TDD + Subagent execution + Milestone Review + Final Review
-    ↓
-User selects or manually specifies combo
-```
-
-**TDD applicability reference**:
-- Backend logic / utility functions / data processing → recommend TDD
-- Frontend page components / styles / layouts → recommend skip TDD
-- Config changes / dependency upgrades → no TDD needed
-
----
-
-### 5.5 Subagent Execution (subagent-execution)
+### 5.4 Subagent Execution (subagent-execution)
 
 **Responsibility**: Execute tasks serially per milestone, with checkpoint reviews between milestones.
 
+**Core assumption**: By the time execution begins, brainstorming and planning have thoroughly resolved all design decisions and ambiguities. Execution proceeds autonomously without requiring human intervention.
+
 **Scheduling rules**:
 ```
-Read planning output + workflow-selector conclusion
+Read planning output (includes execution strategy)
     ↓
 For each Milestone:
   ├─ For each Task within Milestone (serial):
+  │    ├─ Check execution mode (subagent vs main session)
   │    ├─ If TDD enabled → invoke tdd skill (red-green-refactor)
   │    ├─ If TDD not enabled → implement directly
   │    ├─ After implementation → verification-gate (run tests/build)
@@ -163,7 +152,7 @@ For each Milestone:
   ├─ Milestone fully complete → invoke code-review (checkpoint)
   │    ├─ Review passed → next Milestone
   │    └─ Review has issues → dispatch implementer to fix → re-review (max one round)
-  │         └─ Still failing → flag issues for human decision
+  │         └─ Still failing → fix what can be fixed, note remaining issues, proceed
   │
   └─ All Milestones complete → invoke code-review (final global review)
 ```
@@ -181,6 +170,9 @@ For each Milestone:
 - {criterion 1}
 - {criterion 2}
 
+## TDD Instructions (if enabled)
+{Include tdd skill instructions}
+
 ## Output Requirements
 - Complete implementation and run verification
 - Return: change summary + issues encountered + verification result
@@ -188,12 +180,13 @@ For each Milestone:
 
 **Key design decisions**:
 - **All serial**: No parallel implementer dispatch to avoid scheduling chaos
-- **Review fix loop max one round**: fix → re-review once → still failing? flag for human
-- **TDD optional**: Enabled/disabled based on workflow-selector result
+- **Review fix loop max one round**: fix → re-review once → still failing? fix what can be fixed, note remainder, proceed
+- **TDD and execution mode from planning**: Planning determines which tasks use TDD and which execution mode
+- **Autonomous execution**: No human intervention during execution — all decisions resolved in brainstorming and planning
 
 ---
 
-### 5.6 Code Review (code-review)
+### 5.5 Code Review (code-review)
 
 **Responsibility**: Pure review — dispatch a reviewer subagent to produce a structured review report. Does NOT fix code (fixing is delegated back to subagent-execution).
 
@@ -229,7 +222,7 @@ For each Milestone:
 
 ---
 
-### 5.7 Verification Gate (verification-gate)
+### 5.6 Verification Gate (verification-gate)
 
 **Responsibility**: Before claiming "done", force-run verification commands and obtain passing evidence.
 
@@ -251,11 +244,13 @@ For each Milestone:
 
 ---
 
-### 5.8 TDD (tdd)
+### 5.7 TDD (tdd)
 
 **Responsibility**: Guide implementer subagents through the Red-Green-Refactor cycle.
 
-**Positioning**: A sub-flow skill invoked on-demand by subagent-execution. Does not independently chain into the main workflow. Only activated when workflow-selector enables TDD.
+**Positioning**: A sub-flow skill invoked on-demand by subagent-execution. Does not independently chain into the main workflow. Only activated when planning enables TDD for a task.
+
+**Core rule**: No production code without a failing test first.
 
 **Flow**:
 ```
@@ -268,16 +263,29 @@ Refactor: Refactor code to optimize design → run to confirm still passes
 - Backend logic functions / data processing / API endpoints / utility methods → TDD applicable
 - Frontend page components / styles / layouts / config changes → TDD not applicable
 - Frontend core function methods (state management, data processing, utility functions) → TDD applicable
+- Bug fixes → TDD applicable (write failing test that reproduces the bug first)
 
 **Test writing principles**:
 - Verify behavior, not implementation details
 - One test verifies one thing
 - Cover happy paths first, then edge cases and errors
+- Prefer real code over mocks — mock only external dependencies
+
+**When stuck**:
+- Don't know how to test → write wished-for API first
+- Test too complicated → design too complicated, simplify
+- Must mock everything → code too coupled, consider dependency injection
+- Test framework unclear → check package.json scripts, Makefile, or ask
+
+**Testing anti-patterns to avoid**:
+- Testing mock behavior instead of real behavior
+- Test-only methods in production code
+- Over-mocking internal dependencies
 
 **Key differences from Superpowers**:
-- Not mandatory for all tasks; enabled by workflow-selector on demand
+- Not mandatory for all tasks; enabled by planning on demand
 - No frontend page component tests required
-- Simplified flow description, no heavy checklists
+- Less dogmatic tone — practical guidance over rigid rules
 
 ---
 
@@ -300,10 +308,9 @@ Each Skill includes a glossary section at the end, listing generic terms used in
 
 ```
 skills/
-├── dev-flow/SKILL.md
+├── devflow/SKILL.md
 ├── brainstorming/SKILL.md
 ├── planning/SKILL.md
-├── workflow-selector/SKILL.md
 ├── subagent-execution/SKILL.md
 ├── code-review/SKILL.md
 ├── verification-gate/SKILL.md

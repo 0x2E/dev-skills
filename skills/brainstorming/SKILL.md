@@ -9,8 +9,11 @@ Turn ideas into fully-formed designs through collaborative dialogue, producing l
 
 ## Process
 
-### 1. Understand Context
-Check the current project state: files, docs, recent commits, existing conventions.
+### 1. Understand Relevant Context
+Focus only on modules and files related to the feature/change being discussed. Do NOT scan the entire project. Check:
+- Existing code in the target module area
+- Related design docs or specs (if any)
+- Conventions visible in neighboring files (not project-wide)
 
 ### 2. Clarify Requirements
 Ask questions one at a time to refine the idea. Focus on: purpose, constraints, success criteria. Prefer multiple-choice when possible.
@@ -51,11 +54,9 @@ If persisting is appropriate:
 
 If keeping in context only:
 - Summarize the confirmed design in the conversation
+- **Tell the user why**: briefly explain the reason for not persisting (e.g., "This is a small bug fix, so the design will stay in conversation context rather than writing a spec file.")
 - Pass the summary forward to planning as an inline description (no file written)
 - The design lives in the session's conversation history
-
-### 7. Transition
-Ask: "Proceed to planning?" Do NOT force transition.
 
 ## Doc Type Selection
 

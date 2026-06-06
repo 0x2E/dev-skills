@@ -1,11 +1,11 @@
 ---
 name: planning
-description: Use after design confirmation — transform design docs into a milestone-grouped, dependency-annotated task list ready for execution.
+description: Use after design confirmation — transform design docs into a milestone-grouped, dependency-annotated task list with execution strategy, ready for implementation.
 ---
 
 # Planning
 
-Transform design documents into a structured, executable task list with milestone grouping and dependency annotations.
+Transform design documents into a structured, executable task list with milestone grouping, dependency annotations, and execution strategy.
 
 ## Process
 
@@ -34,28 +34,53 @@ For each task, determine:
 - Can tasks within a milestone be ordered logically?
 - Which milestones depend on previous milestones?
 
-### 4. Output
+### 4. Determine Execution Strategy
+
+For each task, classify its nature and determine the execution strategy:
+
+| Signal | Type | TDD? | Execution Mode |
+|--------|------|------|----------------|
+| Database schema, ORM models, data access | Backend Logic | Yes | Subagent |
+| REST/GraphQL endpoints, services | Backend Logic | Yes | Subagent |
+| Auth, validation, business rules | Backend Logic | Yes | Subagent |
+| Utility functions, data transforms | Logic / Utility | Yes | Subagent |
+| React/Vue components, pages, layouts | Frontend UI | No | Subagent |
+| CSS/styling changes | Frontend UI | No | Subagent |
+| Config files, dependency updates | Config / Infra | No | Main Session |
+| Refactoring without behavior change | Refactor | No | Main Session |
+| Small bug fix or trivial change | Trivial | No | Main Session |
+
+**Execution mode guidance:**
+- **Subagent**: Tasks that involve multiple files, require TDD, or benefit from isolated context. Dispatched via subagent-execution.
+- **Main Session**: Simple tasks (config changes, small fixes, trivial updates) that are faster to do directly in the main conversation.
+
+Present the proposed execution strategy to the user for confirmation. The user can adjust individual task strategies.
+
+### 5. Output
 Produce a structured task list:
 
 ```markdown
 ## Implementation Plan
 
+### Execution Strategy
+- Execution mode: Subagent / Main Session / Mixed
+- TDD: Enabled for backend logic and utility tasks
+- Review: Milestone checkpoint reviews + final global review
+
 ### Milestone 1: {name}
-- Task 1.1: {description} [depends on: none]
-- Task 1.2: {description} [depends on: Task 1.1]
+- Task 1.1: {description} [depends on: none] [mode: subagent] [tdd: yes]
+- Task 1.2: {description} [depends on: Task 1.1] [mode: subagent] [tdd: no]
 
 ### Milestone 2: {name}
-- Task 2.1: {description} [depends on: Milestone 1]
-- Task 2.2: {description} [depends on: Task 2.1]
+- Task 2.1: {description} [depends on: Milestone 1] [mode: subagent] [tdd: yes]
+- Task 2.2: {description} [depends on: Task 2.1] [mode: main-session] [tdd: no]
 ```
 
 Each task should:
 - Be small enough to complete in one session
 - Have clear acceptance criteria (implied or explicit)
 - Note dependencies clearly
-
-### 5. Transition
-Ask: "Proceed to workflow selection?" Do NOT force transition.
+- Note execution mode and TDD applicability
 
 ## Milestone Grouping Principles
 

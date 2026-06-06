@@ -1,6 +1,6 @@
 ---
 name: subagent-execution
-description: Use after workflow selection — execute tasks serially per milestone, dispatching implementer subagents, with checkpoint reviews between milestones.
+description: Use after planning — execute tasks serially per milestone, dispatching implementer subagents, with checkpoint reviews between milestones.
 ---
 
 # Subagent Execution
@@ -10,8 +10,11 @@ Execute the implementation plan by dispatching implementer subagents for each ta
 ## Preconditions
 
 Before starting, you must have:
-1. **Planning output** — milestone-grouped task list with dependency annotations
-2. **Workflow-selector decision** — which tasks use TDD, which don't
+1. **Planning output** — milestone-grouped task list with dependency annotations and execution strategy (mode + TDD per task)
+
+## Assumption
+
+By the time execution begins, brainstorming and planning have thoroughly resolved all design decisions and ambiguities. The plan is complete and unambiguous. Implementer subagents should be able to execute each task without requiring human intervention.
 
 ## Git Environment Check
 
@@ -38,40 +41,7 @@ Before starting execution, determine the commit strategy to avoid accumulating a
 
 ## Scheduling Rules
 
-**All tasks execute serially. Never dispatch multiple implementer subagents in parallel.**
-
-```mermaid
-flowchart TD
-    START([Start]) --> GIT_CHECK[Git environment check]
-    GIT_CHECK --> NEXT_MS[Next Milestone]
-    NEXT_MS --> NEXT_TASK[Next Task]
-    NEXT_TASK --> DISPATCH[Dispatch implementer subagent]
-    DISPATCH --> TDD_CHECK{TDD enabled?}
-    TDD_CHECK -->|Yes| TDD_FLOW[Include tdd skill in prompt]
-    TDD_CHECK -->|No| IMPL[Implement directly]
-    TDD_FLOW --> IMPL
-    IMPL --> VG[Run verification-gate]
-    VG --> VG_PASS{Pass?}
-    VG_PASS -->|No| VG_COUNT{Retry count<br>&lt; 3?}
-    VG_COUNT -->|Yes| FIX[Implementer fixes]
-    FIX --> VG
-    VG_COUNT -->|No| VG_FLAG[Flag for human<br>decision]
-    VG_PASS -->|Yes| COMMIT[Commit changes<br>if required]
-    COMMIT --> MORE_TASKS{More tasks in<br>this milestone?}
-    MORE_TASKS -->|Yes| NEXT_TASK
-    MORE_TASKS -->|No| CP_REVIEW[Checkpoint code-review]
-    CP_REVIEW --> CP_PASS{Review pass?}
-    CP_PASS -->|Yes| MORE_MS{More milestones?}
-    CP_PASS -->|No| CP_FIX[Dispatch implementer to fix]
-    CP_FIX --> CP_REREVIEW[Re-review once]
-    CP_REREVIEW --> CP_RPASS{Still fail?}
-    CP_RPASS -->|Yes| FLAG[Flag for human decision]
-    CP_RPASS -->|No| MORE_MS
-    MORE_MS -->|Yes| NEXT_MS
-    MORE_MS -->|No| FINAL_REVIEW[Final global code-review]
-    FINAL_REVIEW --> DONE([Done])
-```
-
+Execute milestones serially. For each milestone, execute tasks serially. Run verification-gate after each task, code-review after each milestone, and final code-review after all milestones. Never dispatch multiple implementer subagents in parallel.
 
 ## Implementer Subagent Prompt
 
@@ -119,10 +89,8 @@ When an implementer subagent returns:
 |--------|--------|
 | **Done** | Proceed to verification-gate |
 | **Needs context** | Provide the missing info (or point to the file to read) and re-dispatch. Do not pre-read and summarize unless the subagent explicitly needs interpretation |
-| **Blocked** | Assess: missing context? task too large? plan wrong? — resolve or escalate |
+| **Blocked** | The plan should have resolved all blockers. If genuinely blocked by an unforeseen issue, assess and resolve — provide more context, break the task down, or adjust the approach. Do not escalate to human. |
 | **Concerns raised** | Read concerns, address if critical, otherwise note and proceed |
-
-Never ignore an implementer saying they are blocked. Something needs to change.
 
 ## Checkpoint Review
 
@@ -130,6 +98,7 @@ After a milestone completes:
 1. Gather all changed files from the milestone's tasks
 2. Dispatch code-review with scope = milestone changes + relevant spec
 3. Review report: pass → next milestone; issues → fix loop (max one re-review)
+4. If issues remain after re-review, fix what can be fixed, note remaining issues, and proceed
 
 ## Final Global Review
 
@@ -141,19 +110,19 @@ After all milestones complete:
 ## Continuous Execution
 
 Do not pause between tasks to check in with the user. Execute all tasks without stopping. Only pause when:
-- BLOCKED status you cannot resolve
-- Ambiguity that genuinely prevents progress
 - All tasks complete
+- The session is interrupted
 
 ## Key Rules
 
 - **Never parallel dispatch** implementer subagents
 - **Always verification-gate** after each task before claiming complete
 - **Never skip review** — checkpoint or final
-- **Max one re-review loop** — flag for human after that
+- **Max one re-review loop** per checkpoint — fix what you can, note what remains, and proceed
 - **Subagents do not read the plan** — provide curated context, but subagents self-gather source files
 - **Commit per task in git worktrees** — avoid accumulating uncommitted changes
-- **Max 3 verification-gate retries** — if a task fails verification 3 times in a row, flag for human decision
+- **Respect planning's execution strategy** — subagent mode vs main session mode per task
+- **Max 3 verification retries per task** — if still failing after 3 attempts, note the issue and proceed to next task
 
 ## Tool Mapping
 
