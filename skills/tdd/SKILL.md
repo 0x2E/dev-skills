@@ -7,21 +7,6 @@ description: Use when writing code with test-driven development — write a fail
 
 Guide implementation through the Red-Green-Refactor cycle.
 
-## When to Use
-
-**Applicable:**
-- Backend logic functions
-- Data processing / transformations
-- API endpoints / services
-- Utility / helper methods
-- Frontend core function methods (state management, data processing, utility functions)
-- Bug fixes (write a failing test that reproduces the bug first)
-
-**Not applicable:**
-- Frontend page components / styles / layouts
-- Config changes / dependency upgrades
-- Boilerplate / scaffolding
-
 ## The Core Rule
 
 ```
@@ -42,34 +27,24 @@ Refactor: Refactor to improve design → run to confirm tests still pass
 
 Write one test for one behavior.
 
-**Good test:**
+**Good test** — clear name, tests real behavior:
 ```typescript
 test('retries failed operations 3 times', async () => {
   let attempts = 0;
-  const operation = () => {
-    attempts++;
-    if (attempts < 3) throw new Error('fail');
-    return 'success';
-  };
-  const result = await retryOperation(operation);
-  expect(result).toBe('success');
+  const operation = () => { attempts++; if (attempts < 3) throw new Error(); return 'ok'; };
+  expect(await retryOperation(operation)).toBe('ok');
   expect(attempts).toBe(3);
 });
 ```
-Clear name, tests real behavior, one thing.
 
-**Bad test:**
+**Bad test** — vague name, tests mock not code:
 ```typescript
 test('retry works', async () => {
-  const mock = jest.fn()
-    .mockRejectedValueOnce(new Error())
-    .mockRejectedValueOnce(new Error())
-    .mockResolvedValueOnce('success');
+  const mock = jest.fn().mockRejectedValueOnce(new Error()).mockResolvedValueOnce('ok');
   await retryOperation(mock);
-  expect(mock).toHaveBeenCalledTimes(3);
+  expect(mock).toHaveBeenCalledTimes(2);
 });
 ```
-Vague name, tests mock not code.
 
 ### Verify RED — Watch It Fail
 
@@ -155,13 +130,5 @@ Never fix a bug without a test that reproduces it first.
 | Over-mocking | Mocking every dependency makes tests brittle | Mock boundaries (DB, network), not internals |
 | Testing implementation details | Tests break on harmless refactors | Test behavior (inputs → outputs), not how it's done |
 | Giant test functions | Hard to understand what failed | One assertion per test, or group related assertions clearly |
-
-## Tool Mapping
-
-| Generic Term | Description |
-|-------------|-------------|
-| Run command | Execute terminal commands (test runner, build) |
-| Read file | Read source and test files |
-| Edit file | Write tests and implementation |
 
 If the test framework or test command is unclear, ask before starting.

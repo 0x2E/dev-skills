@@ -89,9 +89,6 @@ Each task should:
 - Each milestone should produce a testable, reviewable increment
 - 2-5 tasks per milestone is a good range
 
-## Tool Mapping
+## Next Step
 
-| Generic Term | Description |
-|-------------|-------------|
-| Read file | Read design doc file (if persisted) |
-| Conversation context | Extract design from current session history (if inline) |
+After the implementation plan is confirmed by the user, invoke the `subagent-execution` skill immediately. Do NOT start implementing. The only valid next action after completing planning is loading the subagent-execution skill.

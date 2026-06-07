@@ -36,9 +36,3 @@ Before claiming any status:
 - Expressing satisfaction before verification ("Done!", "Fixed!", "Great!")
 - Trusting previous runs or extrapolation
 - Relying on partial verification
-
-## Tool Mapping
-
-| Generic Term | Description |
-|-------------|-------------|
-| Run command | Execute terminal commands (tests, lint, build) |

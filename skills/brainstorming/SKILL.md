@@ -75,10 +75,6 @@ If keeping in context only:
 - Incremental validation — confirm before moving on
 - Stay focused — scope creep is the enemy
 
-## Tool Mapping
+## Next Step
 
-| Generic Term | Description |
-|-------------|-------------|
-| Read file | Read project files, AGENTS.md, existing docs |
-| Search code | Find patterns, conventions, existing implementations |
-| Write file | Save the produced spec/PRD/ADR document |
+After the design is confirmed and documentation is produced (whether persisted to file or kept in conversation context), invoke the `planning` skill immediately. Do NOT start implementing. Do NOT explore the codebase further. The only valid next action after completing brainstorming is loading the planning skill.

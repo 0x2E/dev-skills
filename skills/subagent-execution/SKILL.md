@@ -43,6 +43,8 @@ Before starting execution, determine the commit strategy to avoid accumulating a
 
 Execute milestones serially. For each milestone, execute tasks serially. Run verification-gate after each task, code-review after each milestone, and final code-review after all milestones. Never dispatch multiple implementer subagents in parallel.
 
+If a task fails verification after 3 fix attempts, invoke `systematic-debugging` to diagnose the root cause before further retries. Do not keep retrying without root cause analysis.
+
 ## Implementer Subagent Prompt
 
 Craft the implementer prompt with these elements:
@@ -94,42 +96,43 @@ When an implementer subagent returns:
 
 ## Checkpoint Review
 
-After a milestone completes:
+After a milestone completes, dispatch two-stage code-review:
 1. Gather all changed files from the milestone's tasks
-2. Dispatch code-review with scope = milestone changes + relevant spec
-3. Review report: pass → next milestone; issues → fix loop (max one re-review)
-4. If issues remain after re-review, fix what can be fixed, note remaining issues, and proceed
+2. **Stage 1**: Dispatch spec compliance reviewer (scope = milestone changes + relevant spec)
+3. If spec compliance fails → implementer fixes → re-review (max one round). Do NOT proceed to Stage 2 until Stage 1 passes.
+4. **Stage 2**: Dispatch code quality reviewer (scope = milestone changes)
+5. If code quality fails → implementer fixes → re-review (max one round)
+6. If issues remain after re-review on either stage, fix what can be fixed, note remaining issues, and proceed
 
 ## Final Global Review
 
-After all milestones complete:
+After all milestones complete, dispatch two-stage code-review:
 1. Gather all changes across the entire implementation
-2. Dispatch code-review with scope = full diff + original spec
-3. Review report: pass → ready to merge; issues → fix loop (max one re-review)
+2. **Stage 1**: Dispatch spec compliance reviewer (scope = full diff + original spec)
+3. If spec compliance fails → implementer fixes → re-review (max one round)
+4. **Stage 2**: Dispatch code quality reviewer (scope = full diff)
+5. If code quality fails → implementer fixes → re-review (max one round)
+6. Both stages pass → proceed to final verification
 
-## Continuous Execution
+## Final Verification
 
-Do not pause between tasks to check in with the user. Execute all tasks without stopping. Only pause when:
-- All tasks complete
-- The session is interrupted
+After the final global review passes, run the full verification suite before claiming completion:
 
-## Key Rules
+1. Run the full suite: tests, lint, and build
+2. If **all pass**: implementation is complete. Report the results to the user.
+3. If **any fail**: dispatch a fix subagent with the specific failure output. The fix subagent must:
+   - Understand and fix the root cause of the failure
+   - Run the failing verification command to confirm the fix
+   - Return a summary of changes and the verification result
+4. Re-run the full verification suite after the fix.
+5. If still failing after **3 fix cycles**: invoke `systematic-debugging` to diagnose the root cause. Do not continue retrying without root cause analysis. After debugging, re-dispatch the implementer with the root cause findings.
 
-- **Never parallel dispatch** implementer subagents
-- **Always verification-gate** after each task before claiming complete
-- **Never skip review** — checkpoint or final
-- **Max one re-review loop** per checkpoint — fix what you can, note what remains, and proceed
-- **Subagents do not read the plan** — provide curated context, but subagents self-gather source files
-- **Commit per task in git worktrees** — avoid accumulating uncommitted changes
-- **Respect planning's execution strategy** — subagent mode vs main session mode per task
-- **Max 3 verification retries per task** — if still failing after 3 attempts, note the issue and proceed to next task
+## Complete
 
-## Tool Mapping
+After final verification passes, report completion to the user with a summary of what was implemented and the verification results.
 
-| Generic Term | Description |
-|-------------|-------------|
-| Dispatch subagent | Create an implementer subagent with isolated context |
-| Task list | Manage structured to-do items (mark tasks complete) |
-| Run command | Execute verification commands |
-| Read file | Read plan file, design docs, existing source files |
-| Edit file | N/A — subagent handles implementation |
+## Next Step
+
+After final verification passes and completion is reported, invoke the `finishing-work` skill immediately. This skill handles the integration decision: merge, PR, keep, or discard. Do NOT skip this step — the workflow is not complete until the branch is integrated or explicitly set aside.
+
+

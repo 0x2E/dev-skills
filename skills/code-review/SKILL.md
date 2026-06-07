@@ -1,11 +1,11 @@
 ---
 name: code-review
-description: Use before merging or after milestones — dispatch a reviewer subagent for pure code review, producing a structured report. Does not fix code.
+description: Use before merging or after milestones — two-stage review: spec compliance first, then code quality. Also handles receiving review feedback.
 ---
 
 # Code Review
 
-Dispatch a reviewer subagent to evaluate code and produce a structured review report. This skill focuses on review only — fixing is handled by subagent-execution.
+Two-stage review after each task or milestone: first verify the code matches the spec, then evaluate code quality. Fixing is delegated back to subagent-execution.
 
 ## Triggers
 
@@ -15,7 +15,7 @@ Dispatch a reviewer subagent to evaluate code and produce a structured review re
 
 ## Review Target
 
-Always determine the review target explicitly before dispatching the reviewer:
+Always determine the review target explicitly before dispatching reviewers:
 
 | Trigger | Review Target |
 |---------|--------------|
@@ -27,51 +27,74 @@ Always determine the review target explicitly before dispatching the reviewer:
 
 If the target is unclear, ask the user: "What should I review — uncommitted changes, a specific branch, or a PR?"
 
-## Reviewer Subagent Prompt
+## Two-Stage Review
 
-Craft the reviewer prompt with these elements:
+Execute reviews in strict order. Do NOT start Stage 2 before Stage 1 passes.
+
+### Stage 1: Spec Compliance
+
+Dispatch a spec compliance reviewer. **Only question: does the implementation match the specification?**
 
 ```markdown
 ## Review Scope
 {specific files or directories to review}
-{base SHA and head SHA if using git diff}
 
-## Original Requirements
+## Original Specification
 {summary of what this code should do, from spec/plan}
 
-## Key Acceptance Points
+## Key Acceptance Criteria
 - {critical behaviors to verify}
 - {edge cases to check}
 
-## Output Format
+## Output
+- ✅ Spec compliant: all requirements met, nothing extra
+- ❌ Issues:
+  - Missing: {what the spec requires but code doesn't do}
+  - Extra: {what the code does that the spec doesn't require}
+  - Wrong: {code contradicts the spec}
+- Assessment: Spec Compliant / Needs Fix
+```
+
+**Important**: Spec compliance is binary. If the reviewer finds missing, extra, or wrong behavior, it fails. Do NOT proceed to Stage 2.
+
+### Stage 2: Code Quality
+
+Only after Stage 1 passes, dispatch a code quality reviewer:
+
+```markdown
+## Review Scope
+{specific files or directories to review}
+{git SHAs showing the diff}
+
+## Output
 - Strengths: what was done well
 - Issues:
-  - Critical: blocking, must fix
-  - Important: should fix before merge
-  - Minor: suggestions, non-blocking
+  - Critical: blocking (bugs, security, data loss)
+  - Important: should fix before merge (code structure, error handling)
+  - Minor: suggestions, non-blocking (naming, comments)
 - Assessment: Ready / Needs Fix
 ```
 
+## Review Loop
+
+If either stage finds issues:
+1. The implementer fixes all issues from that stage
+2. Re-run the same stage's review
+3. Repeat until that stage passes, then proceed to the next stage
+4. Max one re-review round per stage — if issues persist after re-review, fix what can be fixed, note remaining issues, and proceed
+
 ## Feedback Handling
 
-When receiving review feedback:
+When receiving review feedback — whether from the reviewer subagent or from an external reviewer (PR review, user, teammate):
 
-1. Verify: Is it technically correct for this codebase?
-2. Evaluate: Does it violate architectural decisions? Is it YAGNI?
-3. Act:
-   - Correct and important → acknowledge and track for fixing
-   - Uncertain → ask user
+1. Understand: Restate the feedback in your own words. If anything is unclear, ask before implementing.
+2. Verify: Check against the actual codebase. Is it technically correct? Does it break existing functionality?
+3. Evaluate: Does it violate architectural decisions? Is it YAGNI?
+4. Act:
+   - Correct and important → implement (one item at a time, test each)
+   - Uncertain → ask the user
    - Wrong or inapplicable → push back with technical reasoning
 
-## Report Consumption
+**No performative agreement.** State what you're fixing, or state why you disagree. Actions over words.
 
-The reviewer subagent returns a structured report. This report is consumed by the caller (subagent-execution or the user), who decides what to do with it.
-
-## Tool Mapping
-
-| Generic Term | Description |
-|-------------|-------------|
-| Dispatch subagent | Create a reviewer subagent with isolated context |
-| Run command | Execute git diff, grep for relevant changes |
-| Read file | Read source files for review |
-| Search code | Search for patterns, usages, references |
+If an external reviewer's feedback conflicts with the user's prior architectural decisions, discuss with the user before implementing.
