@@ -24,7 +24,7 @@ The structured workflow is general-purpose — any task that benefits from requi
 | `code-review` | "Review my code", "/review", "Check this PR" | Dispatch reviewer → structured report + handle feedback |
 | `verification-gate` | "Am I done?", "Is this ready?" | Run commands → verify output → claim complete |
 | `systematic-debugging` | "This bug", "Fix this error", "Why is this failing", "Tests are failing", "Build broke", "Something crashed", "Debug this", "Performance issue", any error/failure/exception scenario | Root cause investigation → hypothesis → minimal fix |
-| `tdd` | Invoked internally by subagent-execution | Red-Green-Refactor cycle |
+| `test-driven-development` | "add tests", "write a test", "TDD", any implementation with test coverage | Red-Green-Refactor cycle — also invoked internally by subagent-execution |
 
 When a user request matches the trigger column, load the corresponding skill immediately — no pre-research.
 

@@ -20,7 +20,7 @@ A tightly-coupled set of structured workflow skills for AI coding assistants —
 | `code-review` | Dispatch reviewer → structured report + handle feedback |
 | `verification-gate` | Run commands → see output → then claim completion |
 | `systematic-debugging` | Root cause investigation → hypothesis → minimal fix |
-| `tdd` | Red-Green-Refactor cycle, invoked on-demand by subagent-execution |
+| `test-driven-development` | Red-Green-Refactor cycle, invoked on-demand by subagent-execution |
 
 ## Default Workflow
 

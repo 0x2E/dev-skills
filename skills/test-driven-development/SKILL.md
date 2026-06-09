@@ -1,6 +1,6 @@
 ---
-name: tdd
-description: Use when writing code with test-driven development — write a failing test first, then minimal implementation, then refactor.
+name: test-driven-development
+description: Use when implementing features or fixing bugs that need test coverage — Red (write failing test first) → Green (minimal code to pass) → Refactor. Use for any task where tests prevent regressions.
 ---
 
 # Test-Driven Development

@@ -63,7 +63,7 @@ Craft the implementer prompt with these elements:
 - {criterion 2}
 
 ## TDD Instructions (if enabled)
-{Include the tdd skill instructions: red → green → refactor cycle}
+{Include the test-driven-development skill instructions: red → green → refactor cycle}
 
 ## Commit Instructions (if enabled by git environment check)
 {If commits are required: Stage all changed files, write a concise commit message summarizing the task, and commit before returning. Follow the existing commit message convention (check `git log --oneline` for the repo's style).}

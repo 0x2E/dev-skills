@@ -58,7 +58,7 @@ Complete each phase before proceeding to the next.
 
 ### Phase 5: Implementation (only after user approval)
 
-1. **Create a failing test** that reproduces the bug (use the `tdd` skill for the bug-fix TDD flow).
+1. **Create a failing test** that reproduces the bug (use the `test-driven-development` skill for the bug-fix TDD flow).
 2. **Implement a single fix** — address the root cause, one change at a time. No "while I'm here" extras.
 3. **Verify** — test passes? No other tests broken? Issue resolved?
 4. **If fix doesn't work** — stop. Count attempts:
