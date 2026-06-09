@@ -1,11 +1,11 @@
 ---
 name: brainstorming
-description: Use before any creative or feature work — explore requirements, produce design, and save long-lived documentation (Spec, PRD, or ADR).
+description: Use before any creative, analytical, or design work — explore requirements, clarify scope, produce design, and save long-lived documentation (Spec, PRD, ADR, or analysis report).
 ---
 
 # Brainstorming
 
-Turn ideas into fully-formed designs through collaborative dialogue, producing long-lived project documentation.
+Turn ideas into fully-formed designs or analysis through collaborative dialogue, producing long-lived project documentation.
 
 ## Process
 

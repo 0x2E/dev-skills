@@ -1,6 +1,6 @@
 # dev-skills
 
-A tightly-coupled set of development workflow skills for AI coding assistants. Inspired by [Superpowers](https://github.com/obra/superpowers).
+A tightly-coupled set of structured workflow skills for AI coding assistants — designed for development but applicable to any task requiring analysis, planning, and systematic execution. Inspired by [Superpowers](https://github.com/obra/superpowers).
 
 ## Philosophy
 

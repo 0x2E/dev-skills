@@ -8,15 +8,17 @@ description: Entry point for the dev-skills workflow system — provides skill i
 Entry point for the dev-skills system. Routes user intent to the right skill and ensures the workflow starts without autonomous pre-research gaps.
 
 **Two routing paths:**
-- **Development workflow** — designing, planning, implementing, finishing
+- **Structured workflow** — analysis/design, planning, execution, finishing (applies to feature development, system design, architecture review, research, documentation planning, and more)
 - **Problem fixing** — bug, test failure, crash, build break, performance issue → `systematic-debugging`
+
+The structured workflow is general-purpose — any task that benefits from requirements clarification, systematic planning, and structured execution can use it. Development is the primary use case, not the only one.
 
 ## Skills & Routing
 
 | Skill | Trigger | Purpose |
 |-------|---------|---------|
-| `brainstorming` | "Design X", "Brainstorm Y", "I want to build X" | Requirements → design → long-lived docs |
-| `planning` | "Create a plan", "Plan this feature" | Design doc → milestone-grouped task list with execution strategy |
+| `brainstorming` | "Design X", "Brainstorm Y", "Analyze X", "Evaluate X", "How should I approach X", "Figure out X", "I want to build X" | Requirements/analysis → design → long-lived docs |
+| `planning` | "Create a plan", "Plan this", "Break this down", "What are the steps for X" | Design doc → milestone-grouped task list with execution strategy |
 | `subagent-execution` | "Execute the plan", "Start implementing" | Serial milestone execution with checkpoint reviews |
 | `finishing-work` | Invoked by subagent-execution | Test verification → merge/PR/keep/discard options → cleanup |
 | `code-review` | "Review my code", "/review", "Check this PR" | Dispatch reviewer → structured report + handle feedback |
