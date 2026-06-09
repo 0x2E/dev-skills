@@ -51,7 +51,7 @@ Decide the output type based on the design's scope and expected lifespan:
 
 | Doc Type | Default Location | Naming |
 |----------|-----------------|--------|
-| Spec / PRD | `docs/specs/` | `NNN-{description}.md` (e.g., `001-lightweight-dev-skills-design.md`) |
+| Spec / PRD | `docs/specs/` | `NNN-{description}.md` (e.g., `001-devflow-system-design.md`) |
 | ADR | `docs/adrs/` | `NNN-{description}.md` (same format, independent directory) |
 
 Rules:
@@ -81,17 +81,6 @@ For minimal-design tasks (bug fix, config change, trivial):
 - **Tell the user why**: briefly explain the reason for not persisting (e.g., "This is a small bug fix, so the design will stay in conversation context rather than writing a spec file.")
 - Pass the summary forward to planning as an inline description (no file written)
 - The design lives in the session's conversation history
-
-## Doc Type Selection
-
-| Type | When to use |
-|------|-------------|
-| Spec | New feature or module with long-term reference value — defines enduring truths about the project |
-| PRD | Product-level feature with user-facing requirements that outlive the current task |
-| ADR | Architectural decision with trade-offs, relevant for the project's lifetime |
-| Plan-attached | Feature or optimization with substantive design but task-scoped lifespan — no standalone file, attached to plan |
-| Context-only (inline) | Bug fix, small refactor, config change — design kept in conversation history only |
-
 
 ## Key Principles
 

@@ -1,9 +1,9 @@
 ---
-name: verification-gate
+name: verifying-completion
 description: Use before claiming any task is complete, fixed, or passing — run actual verification commands and confirm the output before making any success claims.
 ---
 
-# Verification Gate
+# Verifying Completion
 
 **Iron rule: No completion claim without fresh verification evidence.**
 

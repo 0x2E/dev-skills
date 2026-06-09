@@ -12,7 +12,7 @@ Superpowers is a comprehensive AI Coding workflow Skills collection, but it has 
 
 ## 2. Design Principles
 
-1. **Tightly-coupled skills with self-driving chain** — Each skill explicitly names its successor (Next Step), forming an autonomous chain: brainstorming → planning → subagent-execution → finishing-work → complete. No intermediate orchestrator describes the plan; each skill drives to the next automatically.
+1. **Tightly-coupled skills with self-driving chain** — Each skill explicitly names its successor (Next Step), forming an autonomous chain: brainstorming → planning → executing-plans → finishing-work → complete. No intermediate orchestrator describes the plan; each skill drives to the next automatically.
 2. **Conciseness first** — Each SKILL.md stays at a reasonable length, retaining only essential logic
 3. **Fully manual trigger** — The entry point Skill is not auto-injected via hooks; users trigger it on demand
 4. **Docs on demand** — Long-lived docs (Spec/PRD/ADR) are saved only after user confirmation; no auto-generated temporary plans
@@ -24,26 +24,26 @@ Superpowers is a comprehensive AI Coding workflow Skills collection, but it has 
 | 0 | Entry Router | `using-devflow/SKILL.md` | Entry | Skill index + workflow orchestration + routing |
 | 1 | Brainstorming | `brainstorming/SKILL.md` | Core | Requirements discussion → design confirmation → long-lived docs |
 | 2 | Planning | `planning/SKILL.md` | Core | Design doc → milestone-grouped task list + execution strategy |
-| 3 | Subagent Execution | `subagent-execution/SKILL.md` | Core | Serial milestone execution with checkpoint reviews |
+| 3 | Executing Plans | `executing-plans/SKILL.md` | Core | Serial milestone execution with checkpoint reviews |
 | 4 | Finishing Work | `finishing-work/SKILL.md` | Core | Integration decisions: merge, PR, keep, or discard |
-| 5 | Code Review | `code-review/SKILL.md` | Core | Dispatch reviewer → structured report + handle feedback |
-| 6 | Verification Gate | `verification-gate/SKILL.md` | Checkpoint | Run commands, see output, then claim completion |
+| 5 | Reviewing Code | `reviewing-code/SKILL.md` | Core | Dispatch reviewer → structured report + handle feedback |
+| 6 | Verifying Completion | `verifying-completion/SKILL.md` | Checkpoint | Run commands, see output, then claim completion |
 | 7 | Systematic Debugging | `systematic-debugging/SKILL.md` | Standalone | Root cause investigation → hypothesis → minimal fix |
-| 8 | TDD | `tdd/SKILL.md` | Sub-flow | Red-Green-Refactor cycle, invoked on-demand by subagent-execution |
+| 8 | TDD | `test-driven-development/SKILL.md` | Sub-flow | Red-Green-Refactor cycle, invoked on-demand by executing-plans |
 
 ## 4. Default Workflow Chain
 
 ```
 User manually triggers using-devflow
     ↓
-brainstorming → planning → subagent-execution → finishing-work
+brainstorming → planning → executing-plans → finishing-work
     ↓                ↓                    ↓                    ↓
 Discuss reqs /    Break into             Serial execution +   Verify tests →
 design → produce  milestone groups       milestone            present merge/PR/
 long-lived docs   + execution strategy    checkpoint review   keep/discard
 (Spec/PRD/ADR)   (with deps, mode, TDD)                       options → cleanup
                                             ↓ (if TDD enabled)
-                                          tdd (red-green-refactor cycle)
+                                          test-driven-development (red-green-refactor cycle)
 
 Standalone skills (on-demand, not in chain):
   systematic-debugging   → triggered by: bug, test failure, unexpected behavior
@@ -148,7 +148,7 @@ Each Skill except standalone diagnostics drives the chain via its own Next Step 
 
 ---
 
-### 5.5 Subagent Execution (subagent-execution)
+### 5.5 Executing Plans (executing-plans)
 
 **Responsibility**: Execute tasks serially per milestone, with checkpoint reviews between milestones.
 
@@ -161,21 +161,21 @@ Read planning output (includes execution strategy)
 For each Milestone:
   ├─ For each Task within Milestone (serial):
   │    ├─ Check execution mode (subagent vs main session)
-  │    ├─ If TDD enabled → invoke tdd skill (red-green-refactor)
+  │    ├─ If TDD enabled → invoke test-driven-development skill (red-green-refactor)
   │    ├─ If TDD not enabled → implement directly
-  │    ├─ After implementation → verification-gate (run tests/build)
+  │    ├─ After implementation → verifying-completion (run tests/build)
   │    ├─ If failed → fix → retry
   │    ├─ If still failing after 3 fix attempts → invoke systematic-debugging (do not retry without root cause analysis)
   │    └─ Move to next Task
   │
-  ├─ Milestone fully complete → invoke code-review (checkpoint, two-stage: spec compliance → code quality)
+  ├─ Milestone fully complete → invoke reviewing-code (checkpoint, two-stage: spec compliance → code quality)
   │    ├─ Stage 1 (spec) passes → proceed to Stage 2 (code quality)
   │    ├─ Stage 1 fails → implementer fixes → re-review Stage 1 (max one round)
   │    ├─ Stage 2 passes → next Milestone
   │    └─ Stage 2 has issues → dispatch implementer to fix → re-review Stage 2 (max one round)
   │         └─ Still failing → fix what can be fixed, note remaining issues, proceed
   │
-  └─ All Milestones complete → invoke code-review (final global review, two-stage)
+  └─ All Milestones complete → invoke reviewing-code (final global review, two-stage)
         ├─ Stage 1 (spec) passes → Stage 2 (code quality)
         ├─ Stage 2 passes → proceed to final verification
         └─ Either stage has issues → fix loop (max one re-review per stage)
@@ -203,7 +203,7 @@ Final Verification:
 - {criterion 2}
 
 ## TDD Instructions (if enabled)
-{Include tdd skill instructions}
+{Include test-driven-development skill instructions}
 
 ## Output Requirements
 - Complete implementation and run verification
@@ -219,13 +219,13 @@ Final Verification:
 
 ---
 
-### 5.6 Code Review (code-review)
+### 5.6 Reviewing Code (reviewing-code)
 
-**Responsibility**: Two-stage review — spec compliance first, then code quality. Also handles receiving review feedback. Does NOT fix code (fixing is delegated back to subagent-execution).
+**Responsibility**: Two-stage review — spec compliance first, then code quality. Also handles receiving review feedback. Does NOT fix code (fixing is delegated back to executing-plans).
 
 **Trigger timing**:
-1. **Checkpoint Review** — after each Milestone completes, invoked by subagent-execution
-2. **Final Global Review** — after all Milestones complete, invoked by subagent-execution
+1. **Checkpoint Review** — after each Milestone completes, invoked by executing-plans
+2. **Final Global Review** — after all Milestones complete, invoked by executing-plans
 3. **User manual trigger** — anytime via slash command or direct instruction
 
 **Two-stage process (strict order)**:
@@ -249,7 +249,7 @@ Each stage dispatches a separate reviewer subagent with a focused prompt templat
 
 ---
 
-### 5.7 Verification Gate (verification-gate)
+### 5.7 Verifying Completion (verifying-completion)
 
 **Responsibility**: Before claiming "done", force-run verification commands and obtain passing evidence.
 
@@ -291,11 +291,11 @@ Each stage dispatches a separate reviewer subagent with a focused prompt templat
 
 ---
 
-### 5.9 TDD (tdd)
+### 5.9 TDD (test-driven-development)
 
 **Responsibility**: Guide implementer subagents through the Red-Green-Refactor cycle.
 
-**Positioning**: A sub-flow skill invoked on-demand by subagent-execution. Does not independently chain into the main workflow. Only activated when planning enables TDD for a task. TDD applicability (which tasks use TDD) is determined solely by planning — this skill only covers how to do TDD.
+**Positioning**: A sub-flow skill invoked on-demand by executing-plans. Does not independently chain into the main workflow. Only activated when planning enables TDD for a task. TDD applicability (which tasks use TDD) is determined solely by planning — this skill only covers how to do TDD.
 
 **Core rule**: No production code without a failing test first.
 
@@ -315,15 +315,15 @@ skills/
 ├── using-devflow/SKILL.md
 ├── brainstorming/SKILL.md
 ├── planning/SKILL.md
-├── subagent-execution/SKILL.md
+├── executing-plans/SKILL.md
 ├── finishing-work/SKILL.md
-├── code-review/SKILL.md
-├── verification-gate/SKILL.md
+├── reviewing-code/SKILL.md
+├── verifying-completion/SKILL.md
 ├── systematic-debugging/SKILL.md
-├── tdd/SKILL.md
+├── test-driven-development/SKILL.md
 docs/
 │   └── specs/
-│       └── 001-lightweight-dev-skills-design.md
+│       └── 001-devflow-system-design.md
 README.md
 LICENSE
 ```

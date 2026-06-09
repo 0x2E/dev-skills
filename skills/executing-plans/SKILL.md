@@ -1,9 +1,9 @@
 ---
-name: subagent-execution
+name: executing-plans
 description: Use after planning — execute tasks serially per milestone, dispatching implementer subagents, with checkpoint reviews between milestones.
 ---
 
-# Subagent Execution
+# Executing Plans
 
 Execute the implementation plan by dispatching implementer subagents for each task, running checkpoint reviews between milestones, and a final global review.
 
@@ -41,7 +41,7 @@ Before starting execution, determine the commit strategy to avoid accumulating a
 
 ## Scheduling Rules
 
-Execute milestones serially. For each milestone, execute tasks serially. Run verification-gate after each task, code-review after each milestone, and final code-review after all milestones. Never dispatch multiple implementer subagents in parallel.
+Execute milestones serially. For each milestone, execute tasks serially. Run verifying-completion after each task, reviewing-code after each milestone, and final reviewing-code after all milestones. Never dispatch multiple implementer subagents in parallel.
 
 If a task fails verification after 3 fix attempts, invoke `systematic-debugging` to diagnose the root cause before further retries. Do not keep retrying without root cause analysis.
 
@@ -63,7 +63,7 @@ Craft the implementer prompt with these elements:
 - {criterion 2}
 
 ## TDD Instructions (if enabled)
-{Include the tdd skill instructions: red → green → refactor cycle}
+{Include the test-driven-development skill instructions: red → green → refactor cycle}
 
 ## Commit Instructions (if enabled by git environment check)
 {If commits are required: Stage all changed files, write a concise commit message summarizing the task, and commit before returning. Follow the existing commit message convention (check `git log --oneline` for the repo's style).}
@@ -89,30 +89,27 @@ When an implementer subagent returns:
 
 | Status | Action |
 |--------|--------|
-| **Done** | Proceed to verification-gate |
+| **Done** | Proceed to verifying-completion |
 | **Needs context** | Provide the missing info (or point to the file to read) and re-dispatch. Do not pre-read and summarize unless the subagent explicitly needs interpretation |
 | **Blocked** | The plan should have resolved all blockers. If genuinely blocked by an unforeseen issue, assess and resolve — provide more context, break the task down, or adjust the approach. Do not escalate to human. |
 | **Concerns raised** | Read concerns, address if critical, otherwise note and proceed |
 
-## Checkpoint Review
+## Review Gates
 
-After a milestone completes, dispatch two-stage code-review:
-1. Gather all changed files from the milestone's tasks
-2. **Stage 1**: Dispatch spec compliance reviewer (scope = milestone changes + relevant spec)
-3. If spec compliance fails → implementer fixes → re-review (max one round). Do NOT proceed to Stage 2 until Stage 1 passes.
-4. **Stage 2**: Dispatch code quality reviewer (scope = milestone changes)
-5. If code quality fails → implementer fixes → re-review (max one round)
-6. If issues remain after re-review on either stage, fix what can be fixed, note remaining issues, and proceed
+After each milestone and after all milestones complete, dispatch two-stage reviewing-code. The only difference between checkpoint and final review is scope:
 
-## Final Global Review
+| Gate | Scope |
+|------|-------|
+| **Checkpoint** (per milestone) | Diff between milestone's first and last commit |
+| **Final global** (all milestones) | Diff between feature branch HEAD and base branch |
 
-After all milestones complete, dispatch two-stage code-review:
-1. Gather all changes across the entire implementation
-2. **Stage 1**: Dispatch spec compliance reviewer (scope = full diff + original spec)
-3. If spec compliance fails → implementer fixes → re-review (max one round)
-4. **Stage 2**: Dispatch code quality reviewer (scope = full diff)
-5. If code quality fails → implementer fixes → re-review (max one round)
-6. Both stages pass → proceed to final verification
+Review flow:
+1. **Stage 1**: Dispatch spec compliance reviewer (scope = diff + relevant spec)
+2. If spec compliance fails → implementer fixes → re-review (max one round). Do NOT proceed to Stage 2 until Stage 1 passes.
+3. **Stage 2**: Dispatch code quality reviewer (scope = diff)
+4. If code quality fails → implementer fixes → re-review (max one round)
+5. If issues remain after re-review on either stage, fix what can be fixed, note remaining issues, and proceed
+6. Checkpoint review passes → continue to next milestone. Final review passes → proceed to final verification
 
 ## Final Verification
 
