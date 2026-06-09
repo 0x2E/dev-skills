@@ -8,7 +8,7 @@ When a user refers to "skill" or "skills", they mean the skills defined **in thi
 
 ## Spec file naming
 
-Spec files are stored in `docs/specs/` with the format `NNN-xxxx.md` (e.g., `001-lightweight-dev-skills-design.md`).
+Spec files are stored in `docs/specs/` with the format `NNN-xxxx.md` (e.g., `001-devflow-system-design.md`).
 
 ## Language
 

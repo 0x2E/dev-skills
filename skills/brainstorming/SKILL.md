@@ -51,7 +51,7 @@ Decide the output type based on the design's scope and expected lifespan:
 
 | Doc Type | Default Location | Naming |
 |----------|-----------------|--------|
-| Spec / PRD | `docs/specs/` | `NNN-{description}.md` (e.g., `001-lightweight-dev-skills-design.md`) |
+| Spec / PRD | `docs/specs/` | `NNN-{description}.md` (e.g., `001-devflow-system-design.md`) |
 | ADR | `docs/adrs/` | `NNN-{description}.md` (same format, independent directory) |
 
 Rules:

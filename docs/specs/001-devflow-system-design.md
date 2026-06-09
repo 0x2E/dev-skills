@@ -323,7 +323,7 @@ skills/
 ├── test-driven-development/SKILL.md
 docs/
 │   └── specs/
-│       └── 001-lightweight-dev-skills-design.md
+│       └── 001-devflow-system-design.md
 README.md
 LICENSE
 ```
