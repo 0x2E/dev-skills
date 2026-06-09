@@ -1,16 +1,16 @@
 ---
-name: code-review
+name: reviewing-code
 description: Use before merging or after milestones — two-stage review: spec compliance first, then code quality. Also handles receiving review feedback.
 ---
 
-# Code Review
+# Reviewing Code
 
-Two-stage review after each task or milestone: first verify the code matches the spec, then evaluate code quality. Fixing is delegated back to subagent-execution.
+Two-stage review after each task or milestone: first verify the code matches the spec, then evaluate code quality. Fixing is delegated back to executing-plans.
 
 ## Triggers
 
-1. **Checkpoint Review** — after each milestone completes (invoked by subagent-execution)
-2. **Final Global Review** — after all milestones complete (invoked by subagent-execution)
+1. **Checkpoint Review** — after each milestone completes (invoked by executing-plans)
+2. **Final Global Review** — after all milestones complete (invoked by executing-plans)
 3. **Manual trigger** — user invokes directly via `/review` or instruction
 
 ## Review Target

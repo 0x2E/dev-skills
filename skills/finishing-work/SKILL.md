@@ -10,7 +10,7 @@ Guide completion of development work by verifying tests, presenting clear option
 ## Preconditions
 
 Before starting, you must have:
-1. All implementation tasks complete (subagent-execution has finished)
+1. All implementation tasks complete (executing-plans has finished)
 2. Final verification has passed (tests, lint, build)
 
 ## Process

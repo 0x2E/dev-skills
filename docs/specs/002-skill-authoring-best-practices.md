@@ -29,7 +29,7 @@ description: Use when writing code with test-driven development
 ```
 **Good:**
 ```yaml
-description: Enforces Red-Green-Refactor cycle for implementation tasks. Invoked internally by subagent-execution on tasks marked [tdd: yes]. No production code without a failing test.
+description: Enforces Red-Green-Refactor cycle for implementation tasks. Invoked internally by executing-plans on tasks marked [tdd: yes]. No production code without a failing test.
 ```
 
 ## Progressive Disclosure

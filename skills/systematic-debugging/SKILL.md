@@ -84,4 +84,4 @@ If systematic investigation reveals the issue is truly environmental, timing-dep
 
 ## After Debugging
 
-Once the root cause is identified and the fix is verified, return to the workflow step that was interrupted. If debugging was triggered by a subagent failure in `subagent-execution`, re-dispatch the implementer with the root cause analysis to apply the fix. If debugging was triggered by a user directly asking about a bug, report the findings and fix.
+Once the root cause is identified and the fix is verified, return to the workflow step that was interrupted. If debugging was triggered by a subagent failure in `executing-plans`, re-dispatch the implementer with the root cause analysis to apply the fix. If debugging was triggered by a user directly asking about a bug, report the findings and fix.

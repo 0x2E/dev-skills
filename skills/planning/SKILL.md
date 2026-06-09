@@ -56,7 +56,7 @@ For each task, classify its nature and determine the execution strategy:
 | Small bug fix or trivial change | Trivial | No | Main Session |
 
 **Execution mode guidance:**
-- **Subagent**: Tasks that involve multiple files, require TDD, or benefit from isolated context. Dispatched via subagent-execution.
+- **Subagent**: Tasks that involve multiple files, require TDD, or benefit from isolated context. Dispatched via executing-plans.
 - **Main Session**: Simple tasks (config changes, small fixes, trivial updates) that are faster to do directly in the main conversation.
 
 Present the proposed execution strategy to the user for confirmation. The user can adjust individual task strategies.
@@ -100,4 +100,4 @@ Each task should:
 
 ## Next Step
 
-After the implementation plan is confirmed by the user, invoke the `subagent-execution` skill immediately. Do NOT start implementing. The only valid next action after completing planning is loading the subagent-execution skill.
+After the implementation plan is confirmed by the user, invoke the `executing-plans` skill immediately. Do NOT start implementing. The only valid next action after completing planning is loading the executing-plans skill.
