@@ -39,29 +39,47 @@ For each task, determine:
 - Can tasks within a milestone be ordered logically?
 - Which milestones depend on previous milestones?
 
-### 4. Determine Execution Strategy
+### 4. Determine Execution Mode
 
-For each task, classify its nature and determine the execution strategy:
+For each task, classify its nature and determine the execution mode:
 
-| Signal | Type | TDD? | Execution Mode |
-|--------|------|------|----------------|
-| Database schema, ORM models, data access | Backend Logic | Yes | Subagent |
-| REST/GraphQL endpoints, services | Backend Logic | Yes | Subagent |
-| Auth, validation, business rules | Backend Logic | Yes | Subagent |
-| Utility functions, data transforms | Logic / Utility | Yes | Subagent |
-| React/Vue components, pages, layouts | Frontend UI | No | Subagent |
-| CSS/styling changes | Frontend UI | No | Subagent |
-| Config files, dependency updates | Config / Infra | No | Main Session |
-| Refactoring without behavior change | Refactor | No | Main Session |
-| Small bug fix or trivial change | Trivial | No | Main Session |
+| Signal | Type | Execution Mode |
+|--------|------|----------------|
+| Database schema, ORM models, data access | Backend Logic | Subagent |
+| REST/GraphQL endpoints, services | Backend Logic | Subagent |
+| Auth, validation, business rules | Backend Logic | Subagent |
+| Utility functions, data transforms | Logic / Utility | Subagent |
+| React/Vue components, pages, layouts | Frontend UI | Subagent |
+| CSS/styling changes | Frontend UI | Subagent |
+| Config files, dependency updates | Config / Infra | Subagent |
+| Refactoring without behavior change | Refactor | Subagent |
+| Small bug fix or trivial change | Trivial | Main Session |
 
 **Execution mode guidance:**
-- **Subagent**: Tasks that involve multiple files, require TDD, or benefit from isolated context. Dispatched via executing-plans.
-- **Main Session**: Simple tasks (config changes, small fixes, trivial updates) that are faster to do directly in the main conversation.
+- **Subagent** (default): The recommended execution mode for most tasks. Subagents provide isolated context and prevent pollution of the main session. Dispatched via executing-plans.
+- **Main Session**: Only for trivial single-line changes or purely conversational/informational tasks.
+
+### 5. Determine Testing Strategy
+
+Decide which tasks warrant TDD (test-driven development).
+
+| Task Type | TDD Recommended? |
+|-----------|------------------|
+| Backend logic (data, API, auth, validation, business rules) | Yes |
+| Logic / Utility functions, data transforms | Yes |
+| Frontend UI components, pages, layouts | No |
+| CSS/styling changes | No |
+| Config files, dependency updates | No |
+| Refactoring without behavior change | No |
+| Small bug fix or trivial change | No |
+
+### 6. Commit Discipline
+
+After each milestone is fully complete (all tasks pass), commit the changes before starting the next milestone. This keeps the history clean and makes it easy to revert a milestone if needed.
 
 Present the proposed execution strategy to the user for confirmation. The user can adjust individual task strategies.
 
-### 5. Output
+### 7. Output
 Produce a structured task list:
 
 ```markdown
@@ -72,8 +90,9 @@ Produce a structured task list:
 ## Implementation Plan
 
 ### Execution Strategy
-- Execution mode: Subagent / Main Session / Mixed
-- TDD: Enabled for backend logic and utility tasks
+- Execution mode: Subagent (default) / Mixed
+- TDD: See task annotations
+- Commit: After each milestone completes, commit before proceeding to the next
 - Review: Milestone checkpoint reviews + final global review
 
 ### Milestone 1: {name}
