@@ -47,8 +47,27 @@ First, decide whether the design warrants a persisted document:
 
 If persisting is appropriate:
 
-- Ask: **Where should the doc be saved?** and **What naming convention to use?**
-- If AGENTS.md doesn't define doc location/naming, suggest: "Should I add these conventions to AGENTS.md for future sessions?"
+### Doc Location & Naming
+
+**First, check AGENTS.md** for existing doc storage conventions. If AGENTS.md defines location and naming, follow it directly — do not re-ask the user.
+
+**If AGENTS.md has no doc conventions**, present the built-in defaults as a recommendation:
+
+| Doc Type | Default Location | Naming |
+|----------|-----------------|--------|
+| Spec / PRD | `docs/specs/` | `NNN-{description}.md` (e.g., `001-lightweight-dev-skills-design.md`) |
+| ADR | `docs/adrs/` | `NNN-{description}.md` (same format, independent directory) |
+
+Rules:
+- Three-digit sequential numbering, incremented independently per directory
+- Description in lowercase English, words separated by hyphens
+- Scan the target directory for existing files; use max existing number + 1
+
+Ask the user to confirm or adjust the default scheme. Once confirmed, write the conventions to AGENTS.md so future sessions won't need to re-ask.
+
+If the project has no AGENTS.md, suggest creating one.
+
+Then:
 - Generate the long-lived doc: **Spec** (feature specifications), **PRD** (product requirements), or **ADR** (architecture decisions) depending on context
 - Only save after user confirmation
 
