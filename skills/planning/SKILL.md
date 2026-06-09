@@ -11,16 +11,21 @@ Transform design documents into a structured, executable task list with mileston
 
 ### 1. Read Input
 
-Consume the design. Two paths are supported:
+Consume the design. Three paths are supported:
 
 **Path A — From file** (preferred when available):
 - If a design doc exists (Spec / PRD / ADR), read it directly
 - Ask the user for the file path if not obvious
 
-**Path B — From conversation context** (when no file exists):
-- If the design was kept inline by brainstorming (no persisted file), extract it from the current session's conversation history
-- Confirm with the user: "I'll extract the design from our conversation. Let me know if I miss anything."
+**Path B — From plan-attached design** (when brainstorming passed a task-scoped design):
+- The design was confirmed during brainstorming but marked as task-scoped (not a standalone spec file)
+- Extract the key design decisions, constraints, and approach from conversation context
+- These will form the **Design** section at the top of the plan document
 - Summarize what you extracted before proceeding to decomposition
+
+**Path C — From minimal context** (bug fix, small refactor, config change):
+- Extract the essential goal from context — no structured Design section needed
+- Confirm with the user: "I'll extract the design from our conversation. Let me know if I miss anything."
 
 If neither a file nor conversation context contains a design:
 - Ask the user: "What should this implementation achieve? Describe the scope, key features, and constraints."
@@ -60,6 +65,10 @@ Present the proposed execution strategy to the user for confirmation. The user c
 Produce a structured task list:
 
 ```markdown
+## Design (if applicable)
+
+[Key design decisions, constraints, and approach extracted from brainstorming — included when the design was task-scoped and marked as plan-attached]
+
 ## Implementation Plan
 
 ### Execution Strategy

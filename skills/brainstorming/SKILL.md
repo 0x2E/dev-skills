@@ -35,19 +35,15 @@ Fix issues before presenting to the user.
 
 ### 6. Produce Documentation
 
-First, decide whether the design warrants a persisted document:
+Decide the output type based on the design's scope and expected lifespan:
 
-| Persist to file | Keep in context only |
-|----------------|---------------------|
-| New feature or module | Bug fix (even with design discussion) |
-| Architectural change (ADR) | Small refactor with limited scope |
-| Multi-session or multi-person work | Single-session work |
-| Product requirement (PRD) | Configuration or dependency change |
-| Complex design with multiple approaches | Trivial or obvious implementation |
+| Output | Criteria |
+|--------|----------|
+| **Long-lived doc** (Spec / PRD / ADR) | Enduring truths about the project — module architecture, core protocols, technical decisions with lifetime relevance. These outlive any single task. |
+| **Plan-attached design** | Feature work or optimization with substantive design, but the design serves the current task only. No long-term reference value after implementation. |
+| **Context-only** (inline) | Bug fix, small refactor, config change, trivial change — minimal design needed. |
 
-If persisting is appropriate:
-
-### Doc Location & Naming
+### Long-lived doc (Spec / PRD / ADR)
 
 **First, check AGENTS.md** for existing doc storage conventions. If AGENTS.md defines location and naming, follow it directly — do not re-ask the user.
 
@@ -71,7 +67,16 @@ Then:
 - Generate the long-lived doc: **Spec** (feature specifications), **PRD** (product requirements), or **ADR** (architecture decisions) depending on context
 - Only save after user confirmation
 
-If keeping in context only:
+### Plan-attached design
+
+When the design has substance but is task-scoped (not an enduring project truth):
+- Summarize the confirmed design in the conversation
+- **Tell the user why**: "This is a task-scoped design. It will be attached to the implementation plan rather than saved as a standalone spec."
+- Pass the design forward to planning — it will become the **Design** section at the top of the plan document (see `planning` skill for output format)
+
+### Context-only (inline)
+
+For minimal-design tasks (bug fix, config change, trivial):
 - Summarize the confirmed design in the conversation
 - **Tell the user why**: briefly explain the reason for not persisting (e.g., "This is a small bug fix, so the design will stay in conversation context rather than writing a spec file.")
 - Pass the summary forward to planning as an inline description (no file written)
@@ -81,10 +86,11 @@ If keeping in context only:
 
 | Type | When to use |
 |------|-------------|
-| Spec | New feature or module, detailed technical specification |
-| PRD | Product-level feature, user-facing requirements |
-| ADR | Architectural decision, trade-off documentation |
-| Inline (no file) | Bug fix, small refactor, config change — design kept in conversation context |
+| Spec | New feature or module with long-term reference value — defines enduring truths about the project |
+| PRD | Product-level feature with user-facing requirements that outlive the current task |
+| ADR | Architectural decision with trade-offs, relevant for the project's lifetime |
+| Plan-attached | Feature or optimization with substantive design but task-scoped lifespan — no standalone file, attached to plan |
+| Context-only (inline) | Bug fix, small refactor, config change — design kept in conversation history only |
 
 
 ## Key Principles
