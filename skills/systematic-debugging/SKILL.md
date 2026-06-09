@@ -9,11 +9,8 @@ description: Use when encountering any bug, test failure, or unexpected behavior
 
 ## Iron Law
 
-```
-NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
-```
-
-If you haven't completed Phase 1, you cannot propose fixes.
+1. **No automatic fixes.** Never implement a fix without the user's explicit approval.
+2. **No fixes without root cause investigation first.** If you haven't completed Phase 1, you cannot propose fixes.
 
 ## When to Use
 
@@ -23,7 +20,7 @@ Use for ANY technical issue: test failures, bugs, unexpected behavior, performan
 
 **Don't skip when:** issue seems simple, you're in a hurry, someone wants it fixed NOW (systematic is faster than thrashing).
 
-## The Four Phases
+## The Five Phases
 
 Complete each phase before proceeding to the next.
 
@@ -49,7 +46,17 @@ Complete each phase before proceeding to the next.
 3. **Verify** — did it work? Yes → Phase 4. No → form NEW hypothesis. Don't pile on more fixes.
 4. **When you don't know** — say "I don't understand X." Don't pretend.
 
-### Phase 4: Implementation
+### Phase 4: Present Before Acting
+
+**Do not implement any fix yet.** After root cause is confirmed, present to the user:
+
+1. **Conclusion** — What is the root cause, with clear evidence.
+2. **Fix plan** — What specific changes will be made, where, and why.
+3. **Impact assessment** — What else might be affected by this change.
+
+**Wait for the user's explicit approval.** Only proceed to Phase 5 after the user says "go ahead", "approved", "implement it", or similar.
+
+### Phase 5: Implementation (only after user approval)
 
 1. **Create a failing test** that reproduces the bug (use the `tdd` skill for the bug-fix TDD flow).
 2. **Implement a single fix** — address the root cause, one change at a time. No "while I'm here" extras.
@@ -65,6 +72,7 @@ If you catch yourself thinking any of these, stop and return to root cause inves
 - "Quick fix for now, investigate later" — random fixes create new bugs
 - "Just try changing X and see" — guessing is not debugging
 - "It's probably X, let me fix that" — probability is not root cause
+- "Let me just fix it directly" — never implement a fix without presenting the conclusion and fix plan to the user first
 - "One more fix attempt" (after 2+ failures) — 3+ failures signals an architectural problem, not a debugging one
 
 ## When Process Reveals No Root Cause
