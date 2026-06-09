@@ -47,3 +47,4 @@ These thoughts mean STOP — you are about to waste tokens and duplicate work. L
 - Do NOT describe the workflow chain as a plan. Load the first skill and let it drive.
 - When encountering any error, test failure, crash, build break, or unexpected behavior — load `systematic-debugging` immediately, do not attempt ad-hoc fixes.
 - The user can interrupt at any time — say "stop", "skip to planning", "just do X", etc.
+- **Before modifying any code** — no matter how small the issue, requirement, or change — present the approach/solution plan and wait for user confirmation before executing. The only exception is when the user has explicitly requested or authorized skipping confirmation.
