@@ -1,6 +1,6 @@
 ---
 name: verifying-completion
-description: Use before claiming any task is complete, fixed, or passing — run actual verification commands and confirm the output before making any success claims.
+description: "Use before claiming any task is complete, fixed, or passing — run actual verification commands and confirm the output before making any success claims."
 ---
 
 # Verifying Completion

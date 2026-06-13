@@ -1,6 +1,6 @@
 ---
 name: executing-plans
-description: Use after planning — execute tasks serially per milestone, dispatching implementer subagents, with checkpoint reviews between milestones.
+description: "Use after planning — execute tasks serially per milestone, dispatching implementer subagents, with checkpoint reviews between milestones."
 ---
 
 # Executing Plans

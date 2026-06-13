@@ -1,6 +1,6 @@
 ---
 name: using-devflow
-description: Entry point for the dev-skills workflow system — provides skill index and routes user intent to the right skill.
+description: "Entry point for the dev-skills workflow system — provides skill index and routes user intent to the right skill."
 ---
 
 # Using DevFlow
