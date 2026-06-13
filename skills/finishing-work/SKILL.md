@@ -1,6 +1,6 @@
 ---
 name: finishing-work
-description: Use when implementation is complete, all tests pass, and you need to decide how to integrate the work — presents structured options for merge, PR, or cleanup
+description: "Use when implementation is complete, all tests pass, and you need to decide how to integrate the work — presents structured options for merge, PR, or cleanup"
 ---
 
 # Finishing Work

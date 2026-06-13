@@ -1,6 +1,6 @@
 ---
 name: planning
-description: Use after design confirmation — transform design docs into a milestone-grouped, dependency-annotated task list with execution strategy, ready for implementation.
+description: "Use after design confirmation — transform design docs into a milestone-grouped, dependency-annotated task list with execution strategy, ready for implementation."
 ---
 
 # Planning

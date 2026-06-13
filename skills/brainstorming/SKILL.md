@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: Use before any creative, analytical, or design work — explore requirements, clarify scope, produce design, and save long-lived documentation (Spec, PRD, ADR, or analysis report).
+description: "Use before any creative, analytical, or design work — explore requirements, clarify scope, produce design, and save long-lived documentation (Spec, PRD, ADR, or analysis report)."
 ---
 
 # Brainstorming

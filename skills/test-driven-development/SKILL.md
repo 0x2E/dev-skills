@@ -1,6 +1,6 @@
 ---
 name: test-driven-development
-description: Use when implementing features or fixing bugs that need test coverage — Red (write failing test first) → Green (minimal code to pass) → Refactor. Use for any task where tests prevent regressions.
+description: "Use when implementing features or fixing bugs that need test coverage — Red (write failing test first) → Green (minimal code to pass) → Refactor. Use for any task where tests prevent regressions."
 ---
 
 # Test-Driven Development

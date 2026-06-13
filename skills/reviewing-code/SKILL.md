@@ -1,6 +1,6 @@
 ---
 name: reviewing-code
-description: Use before merging or after milestones — two-stage review: spec compliance first, then code quality. Also handles receiving review feedback.
+description: "Use before merging or after milestones — two-stage review: spec compliance first, then code quality. Also handles receiving review feedback."
 ---
 
 # Reviewing Code
