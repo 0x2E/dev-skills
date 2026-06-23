@@ -20,11 +20,11 @@ The collection spans two categories: **workflow skills** that form a self-drivin
 | `brainstorming` | Requirements → design → long-lived docs (Spec/PRD/ADR) |
 | `planning` | Design doc → milestone-grouped task list + execution strategy (TDD decisions) |
 | `executing-plans` | Serial milestone execution with checkpoint reviews |
-| `finishing-work` | Verify tests → merge/PR/keep/discard options → cleanup |
-| `reviewing-code` | Dispatch reviewer → structured report + handle feedback |
-| `verifying-completion` | Run commands → see output → then claim completion |
-| `systematic-debugging` | Root cause investigation → hypothesis → minimal fix |
 | `test-driven-development` | Red-Green-Refactor cycle, invoked on-demand by executing-plans |
+| `verifying-completion` | Run commands → see output → then claim completion |
+| `reviewing-code` | Dispatch reviewer → structured report + handle feedback |
+| `finishing-work` | Verify tests → merge/PR/keep/discard options → cleanup |
+| `systematic-debugging` | Root cause investigation → hypothesis → minimal fix |
 
 ### Standalone Skills
 
