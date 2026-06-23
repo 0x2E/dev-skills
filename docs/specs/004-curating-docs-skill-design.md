@@ -28,7 +28,7 @@ One scan, two diagnoses.
 - Physical duplication (same/near-same filename in multiple locations)
 
 **Content signals:**
-- **Stale** — referenced code paths/functions/interfaces/config keys no longer exist
+- **Stale** — apparent from the doc's own content: broken internal cross-references, outdated version/date/deprecated-tool cues, or explicit stale markers (does not cross-check against source code)
 - **Duplicate** — overlapping content across documents
 - **Contradictory** — conflicting descriptions of the same subject
 - **Orphaned** — no inbound links/references
@@ -42,7 +42,7 @@ Load the built-in defaults (see "Built-in Defaults"), identify the project's exi
 
 ### Phase 3: Codify
 
-Detect the AI config file by priority (see "Config File Priority"), append a `## Documentation Conventions` section. Write only after user confirmation.
+Detect the AI config file by priority (see "Config File Priority"), and add the confirmed documentation conventions to it. Write only after user confirmation.
 
 ### Phase 4: Reorganize (structure dimension)
 

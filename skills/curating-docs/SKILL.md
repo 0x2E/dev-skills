@@ -1,11 +1,11 @@
 ---
 name: curating-docs
-description: "Use to tame documentation chaos in a project — surveys scattered/stale/duplicate/orphaned docs, recommends an organization convention from built-in best practices, codifies it into the AI config file (AGENTS.md/CLAUDE.md/etc.), reorganizes the file structure, and remediates content health. Manually invoked; not part of the automated workflow."
+description: "Use to tame documentation chaos in a project — surveys scattered/stale/duplicate/orphaned docs, recommends an organization convention from built-in best practices, codifies it into the AI config file (AGENTS.md/CLAUDE.md/etc.), reorganizes the file structure, and remediates content health."
 ---
 
 # Curating Docs
 
-Governs a project's documentation assets across two first-class dimensions — **structure** (physical organization) and **content** (health). Manually triggered when docs have accumulated chaos: scattered root files, multiple competing `docs/` directories, inconsistent naming, stale/duplicate/orphaned docs.
+Governs a project's documentation assets across two first-class dimensions — **structure** (physical organization) and **content** (health). Use when docs have accumulated chaos: scattered root files, multiple competing `docs/` directories, inconsistent naming, stale/duplicate/orphaned docs.
 
 ## Iron Law
 
@@ -35,7 +35,7 @@ One scan, two diagnoses. Output a survey report with two sections.
 - **Physical duplication** — same/near-same filename in multiple locations
 
 **Content signals:**
-- **Stale** — referenced code paths/functions/interfaces/config keys no longer exist
+- **Stale** — apparent from the doc's own content: broken internal cross-references, outdated version/date/deprecated-tool cues, or explicit stale markers
 - **Duplicate** — overlapping content across distinct documents
 - **Contradictory** — conflicting descriptions of the same subject
 - **Orphaned** — no inbound links/references
@@ -53,9 +53,9 @@ Lead with the recommendation; do not present a menu of equal options. Note where
 
 ### Phase 3: Codify
 
-Detect the AI config file by **Config File Priority** below — write to the first one that already exists; if none exist, create `AGENTS.md`. Append a `## Documentation Conventions` section capturing the confirmed convention. Write only after user confirmation.
+Detect the AI config file by **Config File Priority** below — write to the first one that already exists; if none exist, create `AGENTS.md`. Add the confirmed documentation conventions to the file. Write only after user confirmation.
 
-Match the existing file's format and heading style. Do not overwrite existing content.
+Match the existing file's format and conventions. Do not overwrite existing content.
 
 ### Phase 4: Reorganize (structure)
 
@@ -117,4 +117,4 @@ Write to the **first existing** file; if none exist, create `AGENTS.md`:
 - Multiple AI config files may coexist; write to only one (the highest-priority existing one) to avoid divergence.
 - A doc with zero inbound links isn't always orphaned — entry points (README, indexes) are legitimately link-free. Check whether it's referenced from source/config/comments before flagging.
 
-This is a standalone, manually-invoked skill. After Phase 5, report the outcome. No further skill is invoked.
+After Phase 5, report the outcome. No further skill is invoked.
