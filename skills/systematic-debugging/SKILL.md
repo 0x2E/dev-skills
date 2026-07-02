@@ -29,7 +29,7 @@ Complete each phase before proceeding to the next.
 1. **Read error messages carefully** — stack traces, line numbers, error codes. Don't skip past warnings.
 2. **Reproduce consistently** — exact steps. If not reproducible, gather more data; don't guess.
 3. **Check recent changes** — git diff, recent commits, new dependencies, config changes.
-4. **Trace data flow** — where does the bad value originate? Trace backward through the call stack until you find the source. Fix at source, not at symptom.
+4. **Trace data flow** — where does the bad value originate? Trace backward through the call stack until you find the source. Fix at source, not at symptom. If the error is deep and the chain is unclear, use the full backward-tracing technique in `root-cause-tracing.md`.
 5. **Multi-component systems** — for each component boundary, add diagnostic instrumentation to log what enters and exits, then run once to see where it breaks.
 
 ### Phase 2: Pattern Analysis
@@ -59,7 +59,7 @@ Complete each phase before proceeding to the next.
 ### Phase 5: Implementation (only after user approval)
 
 1. **Create a failing test** that reproduces the bug (use the `test-driven-development` skill for the bug-fix TDD flow).
-2. **Implement a single fix** — address the root cause, one change at a time. No "while I'm here" extras.
+2. **Implement a single fix** — address the root cause, one change at a time. No "while I'm here" extras. For destructive or cross-boundary failures, pair the fix with layered validation (see `defense-in-depth.md`) so the same bad value can't arrive via another path.
 3. **Verify** — test passes? No other tests broken? Issue resolved?
 4. **If fix doesn't work** — stop. Count attempts:
    - < 3: Return to Phase 1 with new information.
@@ -74,6 +74,41 @@ If you catch yourself thinking any of these, stop and return to root cause inves
 - "It's probably X, let me fix that" — probability is not root cause
 - "Let me just fix it directly" — never implement a fix without presenting the conclusion and fix plan to the user first
 - "One more fix attempt" (after 2+ failures) — 3+ failures signals an architectural problem, not a debugging one
+
+## Common Rationalizations
+
+Process gets skipped through self-justification, not malice. Recognize the excuse, then name the reality.
+
+| Excuse | Reality |
+|--------|---------|
+| "Issue is simple, no process needed" | Simple bugs have root causes too. Process is fastest for simple bugs. |
+| "Emergency, no time for process" | Systematic debugging is faster than guess-and-check thrashing. |
+| "Just try this first, then investigate" | The first fix sets the pattern. Do it right from the start. |
+| "I'll write the test after confirming the fix works" | An untested fix doesn't stick. Write the failing test first to prove it. |
+| "Multiple fixes at once saves time" | You can't isolate what worked. Stacked fixes breed new bugs. |
+| "I see the problem, let me fix it" | Seeing a symptom is not understanding the root cause. |
+| "One more fix attempt" (after 2+ failures) | 3+ failures means a wrong architecture, not a missed fix. |
+
+### User Signals You're Doing It Wrong
+
+When the user says these, you've already cut a corner. Stop and return to Phase 1.
+
+| Signal | What you actually did wrong |
+|--------|------------------------------|
+| "Is that not happening?" | You assumed a state instead of verifying it. |
+| "Will it show us…?" | You should have added evidence-gathering before guessing. |
+| "Stop guessing" | You proposed fixes without understanding the cause. |
+| "We're stuck?" (frustrated) | Your current approach isn't working — re-examine fundamentals. |
+
+## Gotchas
+
+Environment-specific facts that defy reasonable assumptions during debugging:
+
+- **Caching masks the real state.** Build caches (Vite/Webpack), module caches (`node_modules`, `__pycache__`, `.gradle`), Docker layers, and browser caches can serve stale code — making a fix look ineffective or a bug appear intermittent. After a fix that "didn't work," rule out a stale cache before forming a new hypothesis.
+- **Flaky locally, consistent in CI (or vice versa) usually means a race or an environment delta.** Suspect: timing/ordering between tests, different dependency versions, missing env vars, or a test polluter that runs earlier in the CI shard.
+- **A green test does not prove the code works.** Over-mocked tests assert the mock's behavior, not the system's. A bug can hide behind a passing test — check that the test exercises real behavior.
+- **Silent failures are worse than loud ones.** Swallowed exceptions, caught-and-ignored promises, and `|| defaultValue` fallthroughs erase the evidence. Re-surface them temporarily to find the source.
+- **Logging is suppressed in many test runners.** Application loggers are frequently muted during tests; use `console.error`/`stderr` for debug output so it actually appears.
 
 ## When Process Reveals No Root Cause
 
