@@ -33,27 +33,7 @@ Execute reviews in strict order. Do NOT start Stage 2 before Stage 1 passes.
 
 ### Stage 1: Spec Compliance
 
-Dispatch a spec compliance reviewer. **Only question: does the implementation match the specification?**
-
-```markdown
-## Review Scope
-{specific files or directories to review}
-
-## Original Specification
-{summary of what this code should do, from spec/plan}
-
-## Key Acceptance Criteria
-- {critical behaviors to verify}
-- {edge cases to check}
-
-## Output
-- ✅ Spec compliant: all requirements met, nothing extra
-- ❌ Issues:
-  - Missing: {what the spec requires but code doesn't do}
-  - Extra: {what the code does that the spec doesn't require}
-  - Wrong: {code contradicts the spec}
-- Assessment: Spec Compliant / Needs Fix
-```
+Dispatch a spec compliance reviewer. **Only question: does the implementation match the specification?** Use the prompt in `templates/stage1-spec-compliance.md`.
 
 **Important**: Spec compliance is binary. If the reviewer finds missing, extra, or wrong behavior, it fails. Do NOT proceed to Stage 2.
 
@@ -109,41 +89,7 @@ None.
 
 ### Stage 2: Code Quality
 
-Only after Stage 1 passes, dispatch a code quality reviewer:
-
-```markdown
-## Review Scope
-{specific files or directories to review}
-{git SHAs showing the diff}
-
-## Output
-
-### Strengths
-[What's well done? Be specific.]
-
-### Issues
-
-#### Critical (Must Fix)
-[Bugs, security, data loss, broken functionality]
-
-#### Important (Should Fix)
-[Architecture problems, missing features, poor error handling, test gaps]
-
-#### Minor (Nice to Have)
-[Code style, optimization opportunities, documentation polish]
-
-For each issue:
-- File:line reference
-- What's wrong
-- Why it matters
-- How to fix (if not obvious)
-
-### Assessment
-
-**Ready to merge: Yes | No | With fixes**
-
-**Reasoning:** [1-2 sentence technical assessment]
-```
+Only after Stage 1 passes, dispatch a code quality reviewer using the prompt in `templates/stage2-code-quality.md`.
 
 Stage 2 requires file:line references for every concrete issue. Calibrate severity — not everything is Critical. Acknowledge strengths before listing issues; accurate praise helps the implementer trust the rest of the feedback.
 
@@ -201,3 +147,21 @@ When receiving review feedback — whether from the reviewer subagent or from an
 **No performative agreement.** State what you're fixing, or state why you disagree. Actions over words.
 
 If an external reviewer's feedback conflicts with the user's prior architectural decisions, discuss with the user before implementing.
+
+### Feedback Decision Table
+
+| Feedback pattern | Don't | Do |
+|------------------|-------|-----|
+| Reviewer flags a real bug with `file:line` | Argue defensively | Fix it — one item, tested |
+| Reviewer says "this is wrong" without evidence | Agree reflexively to seem responsive | Verify against the code first; implement only if correct |
+| Suggestion that adds scope beyond the spec | Implement to please the reviewer | Push back: out of scope / YAGNI; ask the user if unsure |
+| External feedback conflicts with a prior decision | Silently override the decision | Surface the conflict to the user before acting |
+| Feedback you don't understand | Guess at the intent and change something | Restate it in your own words and ask before acting |
+
+## Gotchas
+
+- **Reviewer subagents have no conversation history.** The reviewer prompt must be self-contained — include the review scope, the spec summary, and acceptance criteria. It cannot recall what was discussed earlier.
+- **Don't start Stage 2 before Stage 1 passes.** Reviewing code quality against an implementation that violates the spec wastes a round — the spec failure forces rework anyway.
+- **Resist "Critical" inflation.** Tagging style nits as Critical drowns out the real must-fix issues. Reserve Critical for bugs, security holes, data loss, and broken functionality.
+- **Cap re-review at one round per stage.** An implementer↔reviewer ping-pong loop burns tokens without converging. After one re-review, fix what you can, note the rest, and proceed.
+- **Large diffs get shallow reviews.** If the milestone diff is too large for one pass, review per-task or split the scope explicitly rather than letting the reviewer skim.
