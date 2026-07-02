@@ -131,4 +131,10 @@ Never fix a bug without a test that reproduces it first.
 | Testing implementation details | Tests break on harmless refactors | Test behavior (inputs → outputs), not how it's done |
 | Giant test functions | Hard to understand what failed | One assertion per test, or group related assertions clearly |
 
+## Gotchas
+
+- **Discover the test command before writing anything.** Check `package.json` scripts, `Makefile`, or `pyproject.toml` — don't assume jest/pytest. The wrong runner produces misleading failures.
+- **RED must fail for the right reason.** An error (import typo, setup exception) is not a failure. Fix setup until the assertion runs and fails because the feature is missing.
+- **Watch-mode output can lag.** When verifying RED/GREEN, use a fresh one-shot command, not output from a `--watch` process that may reflect a previous edit.
+
 If the test framework or test command is unclear, ask before starting.

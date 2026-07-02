@@ -115,4 +115,10 @@ Only if in a git worktree: return to main repo root, run `git worktree remove <p
 - Never clean up worktree for Option 2 (user needs it for PR iteration).
 - Never run `git worktree remove` from inside the worktree being removed.
 
+## Gotchas
+
+- **`gh pr create` fails opaquely when unauthenticated.** Run `gh auth status` first; an auth problem surfaces as a vague error rather than a clear "log in" prompt.
+- **Base branch can be `main` or `master`.** `git merge-base HEAD main` fails on older repos — fall back to `master` before asking the user.
+- **Worktree operations must run from the main repo root.** A worktree's `.git` is a file pointing back to the main repo; you cannot remove the worktree or delete its branch from inside it. Return to the main repo root first.
+
 This is the terminal phase of the workflow chain. After completion, report the outcome to the user. No further skill is invoked.
