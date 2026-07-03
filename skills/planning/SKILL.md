@@ -89,6 +89,10 @@ Produce a structured task list:
 
 ## Implementation Plan
 
+### Global Constraints
+[Rules binding EVERY task — version floors, dependency limits, naming, error/copy conventions, exact values. Copy verbatim so they reach every downstream implementer/reviewer; do not paraphrase. Omit when none apply.]
+- {e.g. Node >= 18; all error responses shaped {error:{code,message}}; no new deps without approval}
+
 ### Execution Strategy
 - Execution mode: Subagent (default) / Mixed
 - TDD: See task annotations
@@ -96,7 +100,7 @@ Produce a structured task list:
 - Review: Milestone checkpoint reviews + final global review
 
 ### Milestone 1: {name}
-- Task 1.1: {description} [depends on: none] [mode: subagent] [tdd: yes]
+- Task 1.1: {description} [depends on: none] [mode: subagent] [tdd: yes] [produces: {contract}] [consumes: {contract}]
 - Task 1.2: {description} [depends on: Task 1.1] [mode: subagent] [tdd: no]
 
 ### Milestone 2: {name}
@@ -105,10 +109,11 @@ Produce a structured task list:
 ```
 
 Each task should:
-- Be small enough to complete in one session
+- Be sized to earn its own test cycle and a reviewer's pass — fold setup, config, and docs into the task that needs them rather than splitting them into standalone tasks
 - Have clear acceptance criteria (implied or explicit)
 - Note dependencies clearly
 - Note execution mode and TDD applicability
+- When a task exposes a contract a neighbor relies on, annotate it with `[produces: ...]`; when it depends on a neighbor's contract, `[consumes: ...]` (omit on trivial tasks)
 
 ## Milestone Grouping Principles
 
