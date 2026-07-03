@@ -124,14 +124,6 @@ After the final global review passes, run the full verification suite before cla
 4. Re-run the full verification suite after the fix.
 5. If still failing after **3 fix cycles**: invoke `systematic-debugging` to diagnose the root cause. Do not continue retrying without root cause analysis. After debugging, re-dispatch the implementer with the root cause findings.
 
-## Gotchas
-
-- **Implementer subagents have no conversation history.** They cannot recall the brainstorming or planning discussion. The task prompt must be self-contained — task description, design context, file paths, and acceptance criteria. If a detail lives only in the conversation, the subagent doesn't have it.
-- **Detect a worktree by checking `.git` itself.** In a worktree `.git` is a *file* (contents: `gitdir: /path/to/main/.git/worktrees/<name>`); in a main repo it's a *directory*. `test -f .git` is the most reliable probe — more direct than parsing `git rev-parse` output.
-- **Commit message style varies per repo.** Before letting an implementer commit, have it check `git log --oneline -5` and mirror the existing convention (Conventional Commits vs. plain prose, prefix style). Defaulting to one style produces an inconsistent history.
-- **Never dispatch implementers in parallel.** Tasks within a milestone may touch overlapping files; parallel writes cause conflicts and lost changes. Execute strictly serially.
-- **The 3-failure threshold is mandatory, not a suggestion.** After 3 verification failures, invoke `systematic-debugging` — repeated retries without root-cause analysis just burn tokens. See `Scheduling Rules`.
-
 ## Complete
 
 After final verification passes, report completion to the user with a summary of what was implemented and the verification results.

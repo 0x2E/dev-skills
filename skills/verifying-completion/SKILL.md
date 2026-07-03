@@ -39,7 +39,5 @@ Before claiming any status:
 
 ## Gotchas
 
-- **Previous runs are not evidence.** Output from an earlier command does not describe the current code state. Each completion claim must rest on a command run in the *current* message — anything older is stale.
-- **Partial suites miss regressions.** Running only the test file you edited is not a green suite. A change can break untouched code via shared dependencies. Run the full suite unless the scope was explicitly narrowed.
 - **Trust the exit code, not the prose.** Some tools print "PASS" but exit non-zero (warnings counted as failures); others print errors yet exit 0. Read both the exit code and the failure count, not the success-looking text.
 - **Beware watch/cached output.** Output captured from a `--watch` process or a cached run may reflect a prior state. Use a fresh one-shot invocation to verify.

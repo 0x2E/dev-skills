@@ -160,8 +160,5 @@ If an external reviewer's feedback conflicts with the user's prior architectural
 
 ## Gotchas
 
-- **Reviewer subagents have no conversation history.** The reviewer prompt must be self-contained — include the review scope, the spec summary, and acceptance criteria. It cannot recall what was discussed earlier.
-- **Don't start Stage 2 before Stage 1 passes.** Reviewing code quality against an implementation that violates the spec wastes a round — the spec failure forces rework anyway.
 - **Resist "Critical" inflation.** Tagging style nits as Critical drowns out the real must-fix issues. Reserve Critical for bugs, security holes, data loss, and broken functionality.
-- **Cap re-review at one round per stage.** An implementer↔reviewer ping-pong loop burns tokens without converging. After one re-review, fix what you can, note the rest, and proceed.
 - **Large diffs get shallow reviews.** If the milestone diff is too large for one pass, review per-task or split the scope explicitly rather than letting the reviewer skim.

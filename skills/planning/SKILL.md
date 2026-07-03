@@ -117,12 +117,6 @@ Each task should:
 - Each milestone should produce a testable, reviewable increment
 - 2-5 tasks per milestone is a good range
 
-## Gotchas
-
-- **TDD does not apply to every task.** Frontend UI, CSS, pure config, and behavior-preserving refactors rarely benefit from red-green-refactor — mark them `[tdd: no]` rather than forcing tests.
-- **Task granularity: one subagent session each.** If a task can't be implemented and verified within a single dispatch, it's too big — split it. Over-large tasks fail verification and force re-dispatch.
-- **The Design section is for plan-attached designs only.** File-based specs stay referenced by path; don't copy the whole spec into the plan.
-
 ## Next Step
 
 After the implementation plan is confirmed by the user, invoke the `executing-plans` skill immediately. Do NOT start implementing. The only valid next action after completing planning is loading the executing-plans skill.

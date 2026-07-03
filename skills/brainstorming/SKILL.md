@@ -82,12 +82,6 @@ For minimal-design tasks (bug fix, config change, trivial):
 - Pass the summary forward to planning as an inline description (no file written)
 - The design lives in the session's conversation history
 
-## Gotchas
-
-- **Never write a spec/PRD/ADR without explicit user confirmation.** Producing long-lived docs is a one-way action — always confirm the file path and content first.
-- **Don't re-ask doc conventions that AGENTS.md already defines.** If AGENTS.md specifies location and naming, follow it directly; asking again wastes a turn.
-- **Pick one output tier, don't blur them.** Long-lived doc / plan-attached / context-only are mutually exclusive — the design's lifespan decides which, not preference.
-
 ## Key Principles
 
 - One question at a time
