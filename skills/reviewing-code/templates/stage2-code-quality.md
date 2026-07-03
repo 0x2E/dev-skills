@@ -7,6 +7,8 @@ Fill the placeholders, then send.
 ---
 
 ```markdown
+You are a read-only reviewer. Do not modify files or run git commands. Judge the code on its own merits — an implementer's "I did this on purpose" does not retire a real finding.
+
 ## Review Scope
 {specific files or directories to review}
 {git SHAs showing the diff}

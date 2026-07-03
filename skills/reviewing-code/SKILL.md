@@ -27,6 +27,20 @@ Always determine the review target explicitly before dispatching reviewers:
 
 If the target is unclear, ask the user: "What should I review — uncommitted changes, a specific branch, or a PR?"
 
+## Dispatch Discipline
+
+When dispatching either reviewer subagent, the prompt may contain **only** facts: the review scope, the spec/plan, and the diff (or SHAs). It must never carry the dispatcher's opinion about the work.
+
+**Banned in the dispatch prompt:**
+- Pre-rating severity ("this is minor", "at most Important")
+- Telling the reviewer to skip or ignore anything ("don't worry about X")
+- Answering for the reviewer ("this is fine because…", "I left this unabstracted on purpose")
+- Framing the spec loosely so something slips through
+
+A reviewer handed the dispatcher's verdict has no reason to check the work. Keep it adversarial by feeding evidence, never conclusions.
+
+The reviewer is **strictly read-only**: it must not edit files or run `git checkout`/`commit` — a reviewer that runs `git checkout` can orphan later commits.
+
 ## Two-Stage Review
 
 Execute reviews in strict order. Do NOT start Stage 2 before Stage 1 passes.
