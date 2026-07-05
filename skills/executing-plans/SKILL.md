@@ -14,7 +14,7 @@ Before starting, you must have:
 
 ## Assumption
 
-By the time execution begins, brainstorming and planning have thoroughly resolved all design decisions and ambiguities. The plan is complete and unambiguous. Implementer subagents should be able to execute each task without requiring human intervention.
+Brainstorming and planning have resolved the design decisions and ambiguities they're meant to resolve. The plan should be executable without human intervention — but before dispatching the first task, run the pre-flight scan (below) to catch conflicts that are cheap to find now and expensive to hit mid-run.
 
 ## Git Environment Check
 
@@ -38,6 +38,17 @@ Before starting execution, determine the commit strategy to avoid accumulating a
    | **Not a git repo** | Follow user's answer from step 2. |
 
 5. **Rationale**: Committing per task or milestone produces a clean, reviewable history. Accumulating all changes into one big commit obscures the progression of the work and makes review and rollback harder.
+
+## Plan Pre-flight
+
+Before dispatching the first task, scan the plan once. Catch problems that are cheap to find now and expensive to hit mid-run:
+
+- **Internal conflicts** — a task contradicts a Global Constraint, or two tasks specify incompatible interfaces (`[produces]`/`[consumes]` don't line up).
+- **Defective asks** — something the plan asks for that a reviewer would flag (e.g., a task adds a dependency the Global Constraints forbid).
+- **Broken dependencies** — a task's `[depends on]` points to nothing, or the ordering is impossible.
+- **Missing acceptance** — a task with no testable success condition.
+
+Raise everything found **at once** to the user. Fix the plan (or get an explicit decision) before starting — do not begin execution and stumble into a conflict partway through. If the scan is clean, proceed.
 
 ## Scheduling Rules
 
