@@ -16,4 +16,35 @@ All project files, skills, and documentation are written in English.
 
 ## Skill Authoring
 
-When writing or editing skills, follow the best practices documented in `docs/specs/002-skill-authoring-best-practices.md`.
+### Core Philosophy
+
+- **Skills guide action, not explain knowledge.** A skill is a set of
+  explicit process, norms, and constraints that direct the agent's
+  actions. Never explain concepts the agent already knows (e.g., what
+  TDD is, how to debug, what makes a good commit message).
+- **Naming a concept as a requirement is not explaining it.** "Apply
+  YAGNI", "follow Red-Green-Refactor" are constraints — keep. "YAGNI
+  means...", "Red-Green-Refactor is a cycle where..." are explanations
+  — cut.
+- **A skill contains only two things:** (1) *discipline* — gates the
+  agent would otherwise skip, plus known concepts it wouldn't activate
+  unprompted, surfaced as requirements; (2) *glue* — workflow handoffs,
+  output formats, and dispatch protocols the agent can't infer.
+  Everything else is re-teaching and gets deleted.
+- **Per-line test:** does this line guide an action, or explain a
+  concept? Only guiding survives.
+
+### Best Practices
+
+- **Gates must be checkable and unambiguous** — binary conditions
+  independent of model and harness (no `ultrathink`-style tokens, no
+  harness-specific frontmatter assumptions). Vague gates diverge across
+  models and runs.
+- **Conciseness is mandatory.** Every sentence must change the agent's
+  behavior. Run the no-op test sentence by sentence; delete what fails.
+- **Descriptions carry what + when.** Front-load trigger terms so the
+  right skill fires; name the specific activation contexts.
+- **Progressive disclosure.** Keep SKILL.md focused; push detail to
+  reference files one level deep, never chained.
+- **Gerund naming**, consistent across the collection (`reviewing-code`,
+  `executing-plans`, `verifying-completion`).
