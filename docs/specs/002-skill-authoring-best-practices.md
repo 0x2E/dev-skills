@@ -255,6 +255,7 @@ If you catch yourself thinking any of these, stop:
 - **Deeply nested references.** All reference files must link directly from SKILL.md, never through intermediate files.
 - **Explaining what the agent already knows.** Skip definitions of common concepts (PDFs, HTTP, databases).
 - **Windows-style paths.** Always use forward slashes: `reference/guide.md` not `reference\guide.md`.
+- **Harness keyword traps.** Some harnesses scan skill text for tokens that switch behavior (Claude Code allocates thinking budget on imperative "think"/"ultrathink"). A bullet containing the exact token can silently flip it on every load — superpowers v6 hit this in its debugging skill. Prefer natural English ("I think X", "reasoning"); if a phrase must read like the trigger, break the exact token (a hyphen) and the text still reads.
 
 ## Failure Modes
 
