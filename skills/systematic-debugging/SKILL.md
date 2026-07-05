@@ -5,20 +5,12 @@ description: "Use when encountering any bug, test failure, or unexpected behavio
 
 # Systematic Debugging
 
-**Core principle: Find root cause before attempting fixes. Symptom fixes are failure.**
+**Find root cause before attempting fixes. Symptom fixes are failure.**
 
 ## Iron Law
 
 1. **No automatic fixes.** Never implement a fix without the user's explicit approval.
 2. **No fixes without root cause investigation first.** If you haven't completed Phase 1, you cannot propose fixes.
-
-## When to Use
-
-Use for ANY technical issue: test failures, bugs, unexpected behavior, performance problems, build failures.
-
-**Especially when:** under time pressure, "just one quick fix" seems obvious, you've already tried multiple fixes, previous fix didn't work, you don't fully understand the issue.
-
-**Don't skip when:** issue seems simple, you're in a hurry, someone wants it fixed NOW (systematic is faster than thrashing).
 
 ## The Five Phases
 
