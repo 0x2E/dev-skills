@@ -5,6 +5,8 @@ description: "Use before claiming any task is complete, fixed, or passing — ru
 
 # Verifying Completion
 
+Run actual verification commands and confirm output before making any completion, fix, or pass claim.
+
 **Iron rule: No completion claim without fresh verification evidence.**
 
 If you haven't run the verification command in this message, you cannot claim it passes.
