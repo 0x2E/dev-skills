@@ -5,6 +5,8 @@ description: "Use before any creative, analytical, or design work — explore re
 
 # Brainstorming
 
+Turn ideas into fully-formed designs or analysis through collaborative dialogue, producing long-lived project documentation.
+
 ## Process
 
 ### 1. Understand Relevant Context

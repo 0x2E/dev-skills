@@ -5,6 +5,8 @@ description: "Use when implementing features or fixing bugs that need test cover
 
 # Test-Driven Development
 
+Guide implementation through the Red-Green-Refactor cycle.
+
 ## The Core Rule
 
 ```

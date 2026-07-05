@@ -5,6 +5,8 @@ description: "Use after design confirmation — transform design docs into a mil
 
 # Planning
 
+Transform design documents into a structured, executable task list with milestone grouping, dependency annotations, and execution strategy.
+
 ## Process
 
 ### 1. Read Input

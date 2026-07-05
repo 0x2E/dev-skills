@@ -5,6 +5,8 @@ description: "Use after planning — execute tasks serially per milestone, dispa
 
 # Executing Plans
 
+Execute the implementation plan by dispatching implementer subagents for each task, running checkpoint reviews between milestones, and a final global review.
+
 ## Preconditions
 
 Before starting, you must have:

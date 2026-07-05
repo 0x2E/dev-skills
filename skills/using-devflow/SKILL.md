@@ -5,6 +5,8 @@ description: "Entry point for the dev-skills workflow system — provides skill 
 
 # Using DevFlow
 
+Entry point for the dev-skills system. Routes user intent to the right skill and ensures the workflow starts without autonomous pre-research gaps.
+
 **Two routing paths:**
 - **Structured workflow** — analysis/design, planning, execution, finishing
 - **Problem fixing** — bug, test failure, crash, build break, performance issue → `systematic-debugging`

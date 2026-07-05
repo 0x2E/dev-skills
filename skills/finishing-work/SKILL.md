@@ -5,6 +5,8 @@ description: "Use when implementation is complete, all tests pass, and you need 
 
 # Finishing Work
 
+Guide completion of development work by verifying tests, presenting clear options, and executing the chosen workflow.
+
 ## Preconditions
 
 Before starting, you must have:
