@@ -82,7 +82,7 @@ Return to main repo root, checkout <base-branch>, pull, merge <feature-branch>. 
 
 #### Option 2: Push and Create PR
 
-`git push -u origin <feature-branch && gh pr create`. Do NOT clean up worktree — the user needs it for PR iteration.
+`git push -u origin <feature-branch> && gh pr create`. Do NOT clean up worktree — the user needs it for PR iteration.
 
 #### Option 3: Keep As-Is
 

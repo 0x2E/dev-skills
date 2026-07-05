@@ -77,7 +77,7 @@ If you catch yourself thinking any of these, stop and return to root cause inves
 
 ## When Process Reveals No Root Cause
 
-If systematic investigation reveals the issue is truly environmental, timing-dependent, or external (rare: ~5% of cases):
+If systematic investigation reveals the issue is truly environmental, timing-dependent, or external:
 1. Document what you investigated.
 2. Implement appropriate handling (retry, timeout, error message).
 3. Add monitoring/logging for future investigation.

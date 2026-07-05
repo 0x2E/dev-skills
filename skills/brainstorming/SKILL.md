@@ -78,7 +78,6 @@ For minimal-design tasks (bug fix, config change, trivial):
 - Summarize the confirmed design in the conversation
 - **Tell the user why**: briefly explain the reason for not persisting (e.g., "This is a small bug fix, so the design will stay in conversation context rather than writing a spec file.")
 - Pass the summary forward to planning as an inline description (no file written)
-- The design lives in the session's conversation history
 
 ## Next Step
 
