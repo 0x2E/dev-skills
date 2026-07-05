@@ -16,6 +16,7 @@ A tightly-coupled set of structured workflow skills for AI coding assistants —
 | `brainstorming` | Requirements → design → long-lived docs (Spec/PRD/ADR) |
 | `planning` | Design doc → milestone-grouped task list + execution strategy (TDD decisions) |
 | `executing-plans` | Serial milestone execution with checkpoint reviews |
+| `finishing-work` | Integration decision: merge, PR, keep, or discard |
 | `reviewing-code` | Dispatch reviewer → structured report + handle feedback |
 | `verifying-completion` | Run commands → see output → then claim completion |
 | `systematic-debugging` | Root cause investigation → hypothesis → minimal fix |
