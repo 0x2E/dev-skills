@@ -5,16 +5,10 @@ description: "Use after planning — execute tasks serially per milestone, dispa
 
 # Executing Plans
 
-Execute the implementation plan by dispatching implementer subagents for each task, running checkpoint reviews between milestones, and a final global review.
-
 ## Preconditions
 
 Before starting, you must have:
 1. **Planning output** — milestone-grouped task list with dependency annotations and execution strategy (mode + TDD per task)
-
-## Assumption
-
-Brainstorming and planning have resolved the design decisions and ambiguities they're meant to resolve. The plan should be executable without human intervention — but before dispatching the first task, run the pre-flight scan (below) to catch conflicts that are cheap to find now and expensive to hit mid-run.
 
 ## Git Environment Check
 
@@ -36,8 +30,6 @@ Before starting execution, determine the commit strategy to avoid accumulating a
    | **Main branch** (regular repo) | Ask the user: "You are on `main`. Should I create a feature branch and commit as we go, or proceed without commits?" |
    | **Feature branch** (regular repo, not worktree) | Ask the user: "Should I commit after each task, after each milestone, or do you prefer to commit yourself?" |
    | **Not a git repo** | Follow user's answer from step 2. |
-
-5. **Rationale**: Committing per task or milestone produces a clean, reviewable history. Accumulating all changes into one big commit obscures the progression of the work and makes review and rollback harder.
 
 ## Plan Pre-flight
 
@@ -90,9 +82,6 @@ Craft the implementer prompt with these elements:
 
 - **Essential context upfront**: subagent receives task description, design context, file paths, and acceptance criteria. It does NOT need to read the full plan/spec.
 - **Self-gather for details**: the subagent should read source files, explore the codebase, and look up conventions on its own as needed. The parent does not need to pre-package every file.
-- **Focused**: one clear task, not "fix everything"
-- **Constrained**: specify what NOT to change if relevant
-- **Specific output**: tell the subagent exactly what to return
 
 ## Handling Implementer Status
 
