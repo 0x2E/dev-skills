@@ -11,7 +11,7 @@ description: "Use when implementing features or fixing bugs that need test cover
 NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
 ```
 
-If you wrote code before the test, delete it and start over. Watching the test fail proves it actually tests something.
+If you wrote code before the test, delete it and start over.
 
 ## The Cycle
 

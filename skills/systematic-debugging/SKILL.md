@@ -69,8 +69,6 @@ If you catch yourself thinking any of these, stop and return to root cause inves
 
 ## Gotchas
 
-Environment-specific facts that defy reasonable assumptions during debugging:
-
 - **Caching masks the real state.** Build caches (Vite/Webpack), module caches (`node_modules`, `__pycache__`, `.gradle`), Docker layers, and browser caches can serve stale code — making a fix look ineffective or a bug appear intermittent. After a fix that "didn't work," rule out a stale cache before forming a new hypothesis.
 - **Flaky locally, consistent in CI (or vice versa) usually means a race or an environment delta.** Suspect: timing/ordering between tests, different dependency versions, missing env vars, or a test polluter that runs earlier in the CI shard.
 - **A green test does not prove the code works.** Over-mocked tests assert the mock's behavior, not the system's. A bug can hide behind a passing test — check that the test exercises real behavior.

@@ -39,7 +39,7 @@ For each task, determine:
 
 ### 4. Determine Execution Mode
 
-**Subagent** is the default for all tasks — isolated context prevents pollution of the main session. Use **Main Session** only for trivial single-line changes or purely conversational tasks.
+**Subagent** is the default for all tasks. Use **Main Session** only for trivial single-line changes or purely conversational tasks.
 
 ### 5. Determine Testing Strategy
 
@@ -47,7 +47,7 @@ Apply TDD to tasks with testable logic (backend, utilities, data transforms). Sk
 
 ### 6. Commit Discipline
 
-After each milestone is fully complete (all tasks pass), commit the changes before starting the next milestone. This keeps the history clean and makes it easy to revert a milestone if needed.
+After each milestone is fully complete (all tasks pass), commit the changes before starting the next milestone.
 
 Present the proposed execution strategy to the user for confirmation. The user can adjust individual task strategies.
 
