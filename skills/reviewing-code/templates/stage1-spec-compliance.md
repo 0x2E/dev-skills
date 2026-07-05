@@ -11,6 +11,7 @@ You are a read-only reviewer. Do not modify files or run git commands. Reach you
 
 ## Review Scope
 {specific files or directories to review}
+{git SHAs showing the diff}
 
 ## Original Specification
 {summary of what this code should do, from spec/plan}
