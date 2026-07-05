@@ -5,8 +5,6 @@ description: "Use before any creative, analytical, or design work — explore re
 
 # Brainstorming
 
-Turn ideas into fully-formed designs or analysis through collaborative dialogue, producing long-lived project documentation.
-
 ## Process
 
 ### 1. Understand Relevant Context
@@ -16,7 +14,7 @@ Focus only on modules and files related to the feature/change being discussed. D
 - Conventions visible in neighboring files (not project-wide)
 
 ### 2. Clarify Requirements
-Ask questions one at a time to refine the idea. Focus on: purpose, constraints, success criteria. Prefer multiple-choice when possible.
+Ask questions one at a time to refine the idea. Focus on: purpose, constraints, success criteria. Apply YAGNI ruthlessly — cut anything not essential to the core goal. Prefer multiple-choice when possible.
 
 ### 3. Explore Approaches
 Propose 2-3 approaches with trade-offs and a recommendation. Lead with the recommended option and explain why.
@@ -81,13 +79,6 @@ For minimal-design tasks (bug fix, config change, trivial):
 - **Tell the user why**: briefly explain the reason for not persisting (e.g., "This is a small bug fix, so the design will stay in conversation context rather than writing a spec file.")
 - Pass the summary forward to planning as an inline description (no file written)
 - The design lives in the session's conversation history
-
-## Key Principles
-
-- One question at a time
-- YAGNI ruthlessly — remove unnecessary features
-- Incremental validation — confirm before moving on
-- Stay focused — scope creep is the enemy
 
 ## Next Step
 
