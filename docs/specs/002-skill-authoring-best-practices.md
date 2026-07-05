@@ -4,7 +4,7 @@ Synthesized from [Claude agent-skills best practices](https://platform.claude.co
 
 ## Core Principles
 
-- **Concise is key.** Only add context the agent doesn't already have. Challenge each sentence: "Would the agent get this wrong without this instruction?" If no, cut it.
+- **Concise is key.** Only add context the agent doesn't already have. Run the **no-op test sentence by sentence, in isolation**: for each sentence ask "If I delete this, does the agent's behavior change?" If no → delete the **whole sentence**, don't rewrite it. Most prose that fails should go, not be trimmed.
 - **Match specificity to fragility.** Bridge with cliffs = prescriptive (exact commands, no variation). Open field = flexible (general guidance, trust judgment).
 - **Provide defaults, not menus.** Pick the recommended approach. Mention alternatives briefly as escape hatches — don't list them as equal options.
 - **Favor procedures over declarations.** Teach *how to approach* a class of problems, not *what to produce* for a single instance.
@@ -14,6 +14,65 @@ Synthesized from [Claude agent-skills best practices](https://platform.claude.co
 - Use **gerund form** (verb + -ing): `reviewing-code`, `executing-subagents`, `verifying-work`, `test-driving-development`.
 - Consistency across the skill collection makes discovery and reference easier. Prefer full descriptive names (e.g., `test-driven-development` over `tdd`) to improve automatic triggering.
 
+## Invocation Mode
+
+Every skill sits in one of two invocation modes. Decide **before** writing the description — the mode dictates how the description is written.
+
+### The two modes
+
+| Mode | Who can trigger | Resting load |
+|---|---|---|
+| **Model-invoked** | The agent fires it autonomously when the task fits; users and other skills can also call it by name | **Context load** — the `description` occupies the agent's window every turn |
+| **User-invoked** | Intended only for a human typing the skill name at a deliberate moment; the agent should *not* reach for it on its own | **Cognitive load** — the human must remember the skill exists |
+
+No free lunch: a skill either spends the agent's context (always loaded) or the human's memory (must be recalled). Naming both costs lets you choose deliberately.
+
+### How to decide
+
+Ask, in order:
+
+1. **Should the agent fire this on its own when the task fits?** Yes → model-invoked.
+2. **Does any other skill need to reach this?** Yes → model-invoked (being reachable counts).
+3. Both no → user-invoked.
+
+### How the description differs
+
+- **Model-invoked**: the description is the agent's only hook. Front-load the leading word and **list trigger branches** so it fires reliably ("Use when the user wants…, mentions…, asks for…").
+- **User-invoked**: strip trigger lists — keep a one-line human-facing summary. No reason to pay wording that baits an invocation you don't want.
+
+### Caveat — "user-invoked" is a writing convention, not a runtime switch
+
+No mainstream runtime honors a `disable-model-invocation` (or similar) frontmatter flag — **unknown frontmatter fields are silently ignored** (confirmed in opencode; Claude Code lists only `name`/`description`). Writing such a field is a lie that misleads future authors. Real enforcement is one of:
+
+- **Write the description un-baited** (no trigger phrases) — the agent is less likely to auto-fire it. This is the primary lever, and it is *soft*: the skill still appears in the agent's available-skills list.
+- **In opencode, gate it via `opencode.json`**: `"permission": { "skill": { "<name>": "ask" } }` forces user approval before the agent loads it — the closest thing to a true switch. (`deny` hides it entirely, but blocks manual calls too.)
+
+> There is **no** mechanism that perfectly means "only the human can start this, the agent never will." `ask` gives the human a veto; an un-baited description makes auto-firing unlikely but not impossible. Treat "user-invoked" as a goal you steer toward, not a binary you flip.
+
+### Worked example (this project)
+
+| Skill | Mode | Why |
+|---|---|---|
+| `verifying-completion` | model-invoked | Agent should recall "verify before claiming done" on its own, every time |
+| `systematic-debugging` | model-invoked | Any failure/crash should auto-trigger it; other skills reference it |
+| `test-driven-development` | model-invoked | Invoked internally by `executing-plans` — must be reachable |
+| `using-devflow` | user-invoked | Entry router — only the human should start the chain; description kept un-baited |
+
+## When to Split a Skill
+
+**Granularity** — how finely to divide skills — costs one of the two resting loads on every cut, so split only when the cut earns it. Two cuts:
+
+| Cut | Split when… | Cost paid |
+|---|---|---|
+| **By invocation** | The skill has a distinct leading word that should trigger on its own, **or** another skill must reach it | **Context load** — the new skill's `description` lives in the window every turn |
+| **By sequence** | Later steps tempt the agent to rush the current one ([premature completion](#completion-criteria)) | Later steps are hidden, so the agent can't fixate on them |
+
+Decision checklist:
+
+1. Should the agent fire this on its own, or must another skill reach it? → consider **by invocation** (weigh whether independent reach is worth the context load).
+2. Does the agent keep rushing ahead to a later step? → consider **by sequence** (hide the tail).
+3. Neither → **don't split**.
+
 ## Writing Descriptions
 
 The `description` field is critical — it's how the agent decides whether to trigger the skill.
@@ -21,7 +80,6 @@ The `description` field is critical — it's how the agent decides whether to tr
 - **Always use third person.** "Facilitates requirements exploration…" not "I can help you…" or "You can use this…"
 - **Include both what and when.** Describe what the skill does *and* the specific triggers/contexts for activation.
 - **Use key terms liberally.** Think about what words will appear in user requests that should route to this skill.
-- **For internally-invoked skills** (not triggered by users directly), state who invokes them and under what conditions.
 
 **Bad:**
 ```yaml
@@ -32,6 +90,30 @@ description: Use when writing code with test-driven development
 description: Enforces Red-Green-Refactor cycle for implementation tasks. Invoked internally by executing-plans on tasks marked [tdd: yes]. No production code without a failing test.
 ```
 
+## Leading Words
+
+A **leading word** is a compact concept already living in the model's pretraining that the agent thinks with while running the skill. Recruited instead of spelled out, it anchors a whole region of behaviour in the fewest tokens. This is the next tier past "concise" — not *cutting* words, but *swapping* a phrase for a single pretrained token that carries the same load.
+
+### Why it serves predictability twice
+
+- **In the body** it anchors *execution*: the agent reaches for the same behaviour every time the word appears.
+- **In the description** it anchors *invocation*: when the same word lives in user prompts, docs, and code, the agent links that shared language to the skill and fires it more reliably.
+
+### How to hunt for them
+
+Look for **duplication** — the same idea restated across several places — and **collapse** it into one pretrained word:
+
+| Restated phrase | Leading word |
+|---|---|
+| "fast, deterministic, low-overhead" loop | **tight** loop |
+| "a loop whose result you trust" (vague gate) | **red** — a binary observable state |
+| "validate direction with minimum cost first" | **tracer bullets** |
+| "information is incomplete, probe first" | **fog of war** |
+
+### Don't fake it
+
+A weak leading word is a **no-op**: "be *thorough*" when the agent is already thorough-ish changes nothing. The fix is a *stronger* word (*relentless*), not a different technique. If no genuine pretrained term fits, leave prose in place — a fake leading word costs tokens and signals nothing.
+
 ## Progressive Disclosure
 
 - Keep `SKILL.md` body under 500 lines and ~5000 tokens. Move detailed reference material to separate files.
@@ -39,6 +121,19 @@ description: Enforces Red-Green-Refactor cycle for implementation tasks. Invoked
 - For reference files longer than 100 lines, include a table of contents at the top.
 - Use descriptive filenames: `reference/schema.md`, `examples/review-output.md`, `templates/implementer-prompt.md` — not `docs/file1.md`.
 - Tell the agent *when* to load each file: "Read `reference/api-errors.md` if the API returns a non-200 status" beats "see references/ for details."
+
+### Co-location
+
+Keep a concept's definition, rules, and caveats **under one heading** rather than scattered. Reading one part should bring its neighbours. (Analogy: a pillbox prints *what it is / how to take it / contraindications* in one compartment, not across three drawers.)
+
+### The branch test for disclosure
+
+When a skill serves multiple use cases (**branches**), use them as the cleanest disclosure test:
+
+- **Every branch needs it** → inline in `SKILL.md`.
+- **Only some branches need it** → push it behind a context pointer.
+
+Inline what all paths share; disclose what only some paths reach.
 
 ## Patterns to Use
 
@@ -122,6 +217,23 @@ Instruct the agent to validate before proceeding. Pattern: do → validate → f
 4. Only proceed when validation passes
 ```
 
+### Completion Criteria
+
+Every step ends on a **completion criterion** — a checkable condition that tells the agent the step is genuinely done. Without one, the agent drifts into **premature completion**: declaring a step finished because attention has already slid to the next one.
+
+A good criterion is:
+
+- **Checkable** — the agent can tell done from not-done.
+- **Exhaustive** — use universal quantifiers ("*every* modified model accounted for", not "produce a change list") to close the loophole that lets one item slip.
+
+| Vague (the agent will hand-wave) | Checkable + exhaustive |
+|---|---|
+| "List the changed files" | "*Every* changed model appears in the change list" |
+| "Write a test" | "A test that fails because of this bug now passes" |
+| "Review the code" | "*Every* changed function passes lint" |
+
+Defence against premature completion, in order: sharpen the criterion first (cheap, local); only if it is irreducibly fuzzy *and* you observe the rush, split the sequence (see [When to Split a Skill](#when-to-split-a-skill)).
+
 ### Plan-Validate-Execute
 
 For batch or destructive operations: create a plan in a structured format → validate against source of truth → execute only after validation passes.
@@ -155,6 +267,20 @@ If you catch yourself thinking any of these, stop:
 - **Deeply nested references.** All reference files must link directly from SKILL.md, never through intermediate files.
 - **Explaining what the agent already knows.** Skip definitions of common concepts (PDFs, HTTP, databases).
 - **Windows-style paths.** Always use forward slashes: `reference/guide.md` not `reference\guide.md`.
+
+## Failure Modes
+
+Use these named symptoms to diagnose what's wrong with a skill. Each maps to a fix elsewhere in this doc.
+
+| Symptom | What it looks like | Fix |
+|---|---|---|
+| **Premature completion** | Agent declares a step done while attention has slid to the next one | Sharpen the [completion criterion](#completion-criteria); if irreducibly fuzzy, [split the sequence](#when-to-split-a-skill) |
+| **Duplication** | The same meaning in more than one place — costs maintenance and tokens | Collapse into a single [leading word](#leading-words) / single source of truth |
+| **Sediment** | Stale layers that settle because adding feels safe and removing feels risky | Run the [no-op test](#core-principles) sentence by sentence |
+| **Sprawl** | Skill simply too long, even when every line is unique | Push reference down the [progressive disclosure](#progressive-disclosure) ladder; split by branch or sequence |
+| **No-op** | A line the agent already obeys by default — paying load to say nothing | Delete the whole sentence, or swap a weak word for a strong [leading word](#leading-words) |
+
+> The default fate of any skill without a pruning discipline is sediment. Visit these symptoms on every edit.
 
 ## Scripts and Executable Code
 
