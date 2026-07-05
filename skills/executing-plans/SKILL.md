@@ -19,8 +19,7 @@ Before starting execution, determine the commit strategy to avoid accumulating a
 2. If **not a git repo**: Ask the user: "This is not a git repository. Do you want me to initialize one and commit as we go?"
 
 3. If **is a git repo**, check whether this is a git worktree:
-   - Run `git rev-parse --git-path HEAD` — if the `HEAD` file path is outside `.git/`, run `git worktree list` to confirm
-   - Or check: `test -f .git && echo "worktree"` (worktrees have `.git` as a file, not a directory)
+   - `test -f .git && echo "worktree"` (worktrees have `.git` as a file, not a directory)
 
 4. Commit strategy:
 
