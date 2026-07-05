@@ -5,8 +5,6 @@ description: "Use after design confirmation — transform design docs into a mil
 
 # Planning
 
-Transform design documents into a structured, executable task list with milestone grouping, dependency annotations, and execution strategy.
-
 ## Process
 
 ### 1. Read Input
@@ -31,7 +29,7 @@ If neither a file nor conversation context contains a design:
 - Ask the user: "What should this implementation achieve? Describe the scope, key features, and constraints."
 
 ### 2. Decompose
-Break the design into modules and tasks. Identify natural grouping boundaries (e.g., data layer → API layer → frontend). These become milestones.
+Break the design into modules and tasks. Identify natural grouping boundaries (e.g., data layer → API layer → frontend). These become milestones. Each milestone should produce a testable, reviewable increment. Aim for 2-5 tasks per milestone.
 
 ### 3. Analyze Dependencies
 For each task, determine:
@@ -41,37 +39,11 @@ For each task, determine:
 
 ### 4. Determine Execution Mode
 
-For each task, classify its nature and determine the execution mode:
-
-| Signal | Type | Execution Mode |
-|--------|------|----------------|
-| Database schema, ORM models, data access | Backend Logic | Subagent |
-| REST/GraphQL endpoints, services | Backend Logic | Subagent |
-| Auth, validation, business rules | Backend Logic | Subagent |
-| Utility functions, data transforms | Logic / Utility | Subagent |
-| React/Vue components, pages, layouts | Frontend UI | Subagent |
-| CSS/styling changes | Frontend UI | Subagent |
-| Config files, dependency updates | Config / Infra | Subagent |
-| Refactoring without behavior change | Refactor | Subagent |
-| Small bug fix or trivial change | Trivial | Main Session |
-
-**Execution mode guidance:**
-- **Subagent** (default): The recommended execution mode for most tasks. Subagents provide isolated context and prevent pollution of the main session. Dispatched via executing-plans.
-- **Main Session**: Only for trivial single-line changes or purely conversational/informational tasks.
+**Subagent** is the default for all tasks — isolated context prevents pollution of the main session. Use **Main Session** only for trivial single-line changes or purely conversational tasks.
 
 ### 5. Determine Testing Strategy
 
-Decide which tasks warrant TDD (test-driven development).
-
-| Task Type | TDD Recommended? |
-|-----------|------------------|
-| Backend logic (data, API, auth, validation, business rules) | Yes |
-| Logic / Utility functions, data transforms | Yes |
-| Frontend UI components, pages, layouts | No |
-| CSS/styling changes | No |
-| Config files, dependency updates | No |
-| Refactoring without behavior change | No |
-| Small bug fix or trivial change | No |
+Apply TDD to tasks with testable logic (backend, utilities, data transforms). Skip TDD for pure UI, styling, config, refactoring without behavior change, and trivial changes.
 
 ### 6. Commit Discipline
 
@@ -114,13 +86,6 @@ Each task should:
 - Note dependencies clearly
 - Note execution mode and TDD applicability
 - When a task exposes a contract a neighbor relies on, annotate it with `[produces: ...]`; when it depends on a neighbor's contract, `[consumes: ...]` (omit on trivial tasks)
-
-## Milestone Grouping Principles
-
-- Group by architectural layer (data, API, UI)
-- Group by functional module (auth, billing, dashboard)
-- Each milestone should produce a testable, reviewable increment
-- 2-5 tasks per milestone is a good range
 
 ## Next Step
 
