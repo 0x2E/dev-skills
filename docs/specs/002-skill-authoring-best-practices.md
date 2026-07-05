@@ -37,7 +37,7 @@ Ask, in order:
 
 ### How the description differs
 
-- **Model-invoked**: the description is the agent's only hook. Front-load the leading word and **list trigger branches** so it fires reliably ("Use when the user wants…, mentions…, asks for…").
+- **Model-invoked**: the description is the agent's only hook. Front-load the key terms and **list trigger branches** so it fires reliably ("Use when the user wants…, mentions…, asks for…").
 - **User-invoked**: strip trigger lists — keep a one-line human-facing summary. No reason to pay wording that baits an invocation you don't want.
 
 ### Caveat — "user-invoked" is a writing convention, not a runtime switch
@@ -77,7 +77,6 @@ Decision checklist:
 
 The `description` field is critical — it's how the agent decides whether to trigger the skill.
 
-- **Always use third person.** "Facilitates requirements exploration…" not "I can help you…" or "You can use this…"
 - **Include both what and when.** Describe what the skill does *and* the specific triggers/contexts for activation.
 - **Use key terms liberally.** Think about what words will appear in user requests that should route to this skill.
 
@@ -90,30 +89,6 @@ description: Use when writing code with test-driven development
 description: Enforces Red-Green-Refactor cycle for implementation tasks. Invoked internally by executing-plans on tasks marked [tdd: yes]. No production code without a failing test.
 ```
 
-## Leading Words
-
-A **leading word** is a compact concept already living in the model's pretraining that the agent thinks with while running the skill. Recruited instead of spelled out, it anchors a whole region of behaviour in the fewest tokens. This is the next tier past "concise" — not *cutting* words, but *swapping* a phrase for a single pretrained token that carries the same load.
-
-### Why it serves predictability twice
-
-- **In the body** it anchors *execution*: the agent reaches for the same behaviour every time the word appears.
-- **In the description** it anchors *invocation*: when the same word lives in user prompts, docs, and code, the agent links that shared language to the skill and fires it more reliably.
-
-### How to hunt for them
-
-Look for **duplication** — the same idea restated across several places — and **collapse** it into one pretrained word:
-
-| Restated phrase | Leading word |
-|---|---|
-| "fast, deterministic, low-overhead" loop | **tight** loop |
-| "a loop whose result you trust" (vague gate) | **red** — a binary observable state |
-| "validate direction with minimum cost first" | **tracer bullets** |
-| "information is incomplete, probe first" | **fog of war** |
-
-### Don't fake it
-
-A weak leading word is a **no-op**: "be *thorough*" when the agent is already thorough-ish changes nothing. The fix is a *stronger* word (*relentless*), not a different technique. If no genuine pretrained term fits, leave prose in place — a fake leading word costs tokens and signals nothing.
-
 ## Progressive Disclosure
 
 - Keep `SKILL.md` body under 500 lines and ~5000 tokens. Move detailed reference material to separate files.
@@ -124,7 +99,7 @@ A weak leading word is a **no-op**: "be *thorough*" when the agent is already th
 
 ### Co-location
 
-Keep a concept's definition, rules, and caveats **under one heading** rather than scattered. Reading one part should bring its neighbours. (Analogy: a pillbox prints *what it is / how to take it / contraindications* in one compartment, not across three drawers.)
+Keep a concept's definition, rules, and caveats **under one heading** rather than scattered. Reading one part should bring its neighbours.
 
 ### The branch test for disclosure
 
@@ -136,6 +111,19 @@ When a skill serves multiple use cases (**branches**), use them as the cleanest 
 Inline what all paths share; disclose what only some paths reach.
 
 ## Patterns to Use
+
+### Match the Form to the Failure
+
+Before reaching for a pattern, match it to *why* the agent fails. The wrong form can make things worse.
+
+| Failure type | Right form | Why |
+|--------------|-----------|-----|
+| Discipline slip — knows better but slips | Flat rule / Red Flags ("don't X", "if you think Y, stop") | Names the lapse; the agent can self-correct |
+| Output shape is wrong — structure, detail level, or style | Worked example (input→output pair) | The agent pattern-matches a concrete model, not an abstraction |
+| Missing environment-specific fact | Gotcha | The agent can't discover this alone |
+| Wrong order of operations | Checklist / Workflow | Sequence is the whole point |
+
+A flat "don't do X" backfires on shape problems: it says what to avoid but not what to aim at, so the next attempt drifts differently. When the problem is *how the output should look*, show one.
 
 ### Gotchas Section (highest-value content)
 
@@ -275,10 +263,10 @@ Use these named symptoms to diagnose what's wrong with a skill. Each maps to a f
 | Symptom | What it looks like | Fix |
 |---|---|---|
 | **Premature completion** | Agent declares a step done while attention has slid to the next one | Sharpen the [completion criterion](#completion-criteria); if irreducibly fuzzy, [split the sequence](#when-to-split-a-skill) |
-| **Duplication** | The same meaning in more than one place — costs maintenance and tokens | Collapse into a single [leading word](#leading-words) / single source of truth |
+| **Duplication** | The same meaning in more than one place — costs maintenance and tokens | Collapse into a single source of truth |
 | **Sediment** | Stale layers that settle because adding feels safe and removing feels risky | Run the [no-op test](#core-principles) sentence by sentence |
 | **Sprawl** | Skill simply too long, even when every line is unique | Push reference down the [progressive disclosure](#progressive-disclosure) ladder; split by branch or sequence |
-| **No-op** | A line the agent already obeys by default — paying load to say nothing | Delete the whole sentence, or swap a weak word for a strong [leading word](#leading-words) |
+| **No-op** | A line the agent already obeys by default — paying load to say nothing | Delete the whole sentence |
 
 > The default fate of any skill without a pruning discipline is sediment. Visit these symptoms on every edit.
 
