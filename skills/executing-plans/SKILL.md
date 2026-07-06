@@ -12,10 +12,6 @@ Execute the implementation plan by dispatching implementer subagents for each ta
 Before starting, you must have:
 1. **Planning output** — milestone-grouped task list with dependency annotations and execution strategy (mode + TDD per task)
 
-## Assumption
-
-By the time execution begins, brainstorming and planning have thoroughly resolved all design decisions and ambiguities. The plan is complete and unambiguous. Implementer subagents should be able to execute each task without requiring human intervention.
-
 ## Git Environment Check
 
 Before starting execution, determine the commit strategy to avoid accumulating an uncommitted blob of changes:
@@ -25,8 +21,7 @@ Before starting execution, determine the commit strategy to avoid accumulating a
 2. If **not a git repo**: Ask the user: "This is not a git repository. Do you want me to initialize one and commit as we go?"
 
 3. If **is a git repo**, check whether this is a git worktree:
-   - Run `git rev-parse --git-path HEAD` — if the `HEAD` file path is outside `.git/`, run `git worktree list` to confirm
-   - Or check: `test -f .git && echo "worktree"` (worktrees have `.git` as a file, not a directory)
+   - `test -f .git && echo "worktree"` (worktrees have `.git` as a file, not a directory)
 
 4. Commit strategy:
 
@@ -37,7 +32,16 @@ Before starting execution, determine the commit strategy to avoid accumulating a
    | **Feature branch** (regular repo, not worktree) | Ask the user: "Should I commit after each task, after each milestone, or do you prefer to commit yourself?" |
    | **Not a git repo** | Follow user's answer from step 2. |
 
-5. **Rationale**: Committing per task or milestone produces a clean, reviewable history. Accumulating all changes into one big commit obscures the progression of the work and makes review and rollback harder.
+## Plan Pre-flight
+
+Before dispatching the first task, scan the plan once. Catch problems that are cheap to find now and expensive to hit mid-run:
+
+- **Internal conflicts** — a task contradicts a Global Constraint, or two tasks specify incompatible interfaces (`[produces]`/`[consumes]` don't line up).
+- **Defective asks** — something the plan asks for that a reviewer would flag (e.g., a task adds a dependency the Global Constraints forbid).
+- **Broken dependencies** — a task's `[depends on]` points to nothing, or the ordering is impossible.
+- **Missing acceptance** — a task with no testable success condition.
+
+Raise everything found **at once** to the user. Fix the plan (or get an explicit decision) before starting — do not begin execution and stumble into a conflict partway through. If the scan is clean, proceed.
 
 ## Scheduling Rules
 
@@ -79,9 +83,6 @@ Craft the implementer prompt with these elements:
 
 - **Essential context upfront**: subagent receives task description, design context, file paths, and acceptance criteria. It does NOT need to read the full plan/spec.
 - **Self-gather for details**: the subagent should read source files, explore the codebase, and look up conventions on its own as needed. The parent does not need to pre-package every file.
-- **Focused**: one clear task, not "fix everything"
-- **Constrained**: specify what NOT to change if relevant
-- **Specific output**: tell the subagent exactly what to return
 
 ## Handling Implementer Status
 

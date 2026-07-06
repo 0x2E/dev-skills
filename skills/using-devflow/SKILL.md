@@ -8,10 +8,8 @@ description: "Entry point for the dev-skills workflow system — provides skill 
 Entry point for the dev-skills system. Routes user intent to the right skill and ensures the workflow starts without autonomous pre-research gaps.
 
 **Two routing paths:**
-- **Structured workflow** — analysis/design, planning, execution, finishing (applies to feature development, system design, architecture review, research, documentation planning, and more)
+- **Structured workflow** — analysis/design, planning, execution, finishing
 - **Problem fixing** — bug, test failure, crash, build break, performance issue → `systematic-debugging`
-
-The structured workflow is general-purpose — any task that benefits from requirements clarification, systematic planning, and structured execution can use it. Development is the primary use case, not the only one.
 
 ## Skills & Routing
 

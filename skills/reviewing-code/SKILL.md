@@ -27,156 +27,37 @@ Always determine the review target explicitly before dispatching reviewers:
 
 If the target is unclear, ask the user: "What should I review — uncommitted changes, a specific branch, or a PR?"
 
+## Dispatch Discipline
+
+When dispatching either reviewer subagent, the prompt may contain **only** facts: the review scope, the spec/plan, and the diff (or SHAs). It must never carry the dispatcher's opinion about the work.
+
+**Banned in the dispatch prompt:**
+- Pre-rating severity ("this is minor", "at most Important")
+- Telling the reviewer to skip or ignore anything ("don't worry about X")
+- Answering for the reviewer ("this is fine because…", "I left this unabstracted on purpose")
+- Framing the spec loosely so something slips through
+
+A reviewer handed the dispatcher's verdict has no reason to check the work. Keep it adversarial by feeding evidence, never conclusions.
+
+The reviewer is **strictly read-only**: it must not edit files or run `git checkout`/`commit` — a reviewer that runs `git checkout` can orphan later commits.
+
 ## Two-Stage Review
 
 Execute reviews in strict order. Do NOT start Stage 2 before Stage 1 passes.
 
 ### Stage 1: Spec Compliance
 
-Dispatch a spec compliance reviewer. **Only question: does the implementation match the specification?**
-
-```markdown
-## Review Scope
-{specific files or directories to review}
-
-## Original Specification
-{summary of what this code should do, from spec/plan}
-
-## Key Acceptance Criteria
-- {critical behaviors to verify}
-- {edge cases to check}
-
-## Output
-- ✅ Spec compliant: all requirements met, nothing extra
-- ❌ Issues:
-  - Missing: {what the spec requires but code doesn't do}
-  - Extra: {what the code does that the spec doesn't require}
-  - Wrong: {code contradicts the spec}
-- Assessment: Spec Compliant / Needs Fix
-```
+Dispatch a spec compliance reviewer. **Only question: does the implementation match the specification?** Use the prompt in `templates/stage1-spec-compliance.md`.
 
 **Important**: Spec compliance is binary. If the reviewer finds missing, extra, or wrong behavior, it fails. Do NOT proceed to Stage 2.
 
 Each issue must include: file:line reference, what's wrong, what the spec requires, and how to fix.
 
-#### Stage 1 Example: Pass
-
-```
-### Strengths
-- All 3 endpoints specified in the plan are implemented: GET /users, POST /users, DELETE /users/:id
-- Validation rules match spec exactly (email format, username 3-32 chars)
-
-### Issues
-
-None.
-
-### Assessment
-
-**Spec compliant: Yes**
-
-**Reasoning:** All required endpoints and behaviors present, no extra functionality added.
-```
-
-#### Stage 1 Example: Fail
-
-```
-### Issues
-
-#### Missing
-1. **DELETE /users/:id endpoint not implemented**
-   - Spec: docs/specs/001-user-api.md line 42 requires `DELETE /users/:id` returning 204
-   - Impact: Users cannot be removed via API, spec is incomplete
-   - Fix: Add DELETE route handler with user existence check
-
-#### Wrong
-2. **Pagination uses page instead of cursor**
-   - File: src/routes/users.ts:18 — `req.query.page` should be `req.query.cursor`
-   - Spec: docs/specs/001-user-api.md line 28 explicitly requires cursor-based pagination
-   - Fix: Replace `page` with `cursor`, update response to include `next_cursor`
-
-#### Extra
-3. **PATCH /users endpoint added without spec requirement**
-   - File: src/routes/users.ts:55-72
-   - Spec only defines GET, POST, DELETE — PATCH is out of scope for this milestone
-   - Fix: Remove or confirm with user if this was intentional
-
-### Assessment
-
-**Spec compliant: No**
-
-**Reasoning:** Missing required endpoint (DELETE), wrong pagination implementation, and extra out-of-scope endpoint. Resolve all issues before Stage 2.
-```
-
 ### Stage 2: Code Quality
 
-Only after Stage 1 passes, dispatch a code quality reviewer:
-
-```markdown
-## Review Scope
-{specific files or directories to review}
-{git SHAs showing the diff}
-
-## Output
-
-### Strengths
-[What's well done? Be specific.]
-
-### Issues
-
-#### Critical (Must Fix)
-[Bugs, security, data loss, broken functionality]
-
-#### Important (Should Fix)
-[Architecture problems, missing features, poor error handling, test gaps]
-
-#### Minor (Nice to Have)
-[Code style, optimization opportunities, documentation polish]
-
-For each issue:
-- File:line reference
-- What's wrong
-- Why it matters
-- How to fix (if not obvious)
-
-### Assessment
-
-**Ready to merge: Yes | No | With fixes**
-
-**Reasoning:** [1-2 sentence technical assessment]
-```
+Only after Stage 1 passes, dispatch a code quality reviewer using the prompt in `templates/stage2-code-quality.md`.
 
 Stage 2 requires file:line references for every concrete issue. Calibrate severity — not everything is Critical. Acknowledge strengths before listing issues; accurate praise helps the implementer trust the rest of the feedback.
-
-#### Stage 2 Example: Pass
-
-```
-### Strengths
-- Clean error handling with consistent error response format across all routes
-- Input validation extracted to validators.ts, reused across routes — DRY without over-abstraction
-- Test coverage includes edge cases (empty body, malformed IDs, missing auth header)
-
-### Issues
-
-#### Important
-1. **Missing index on users.email column**
-   - File: src/db/migrations/002_create_users.ts:8
-   - What's wrong: No unique index on email, every login triggers a full table scan
-   - Why it matters: Linear performance degradation as user count grows
-   - Fix: Add `CREATE UNIQUE INDEX idx_users_email ON users(email)`
-
-#### Minor
-1. **Magic number in rate limiter**
-   - File: src/middleware/rate-limit.ts:12 — `maxRequests = 100`
-   - What's wrong: Hardcoded value with no documented reason
-   - Why it matters: Hard to tune without redeploy
-   - Fix: Extract to config, or add comment explaining the choice
-
-### Assessment
-
-**Ready to merge: With fixes**
-
-**Reasoning:** Core implementation solid with good architecture and test coverage. The missing index is important for production performance but not blocking. Minor config issue can be addressed post-merge.
-```
 
 ## Review Loop
 
@@ -201,3 +82,18 @@ When receiving review feedback — whether from the reviewer subagent or from an
 **No performative agreement.** State what you're fixing, or state why you disagree. Actions over words.
 
 If an external reviewer's feedback conflicts with the user's prior architectural decisions, discuss with the user before implementing.
+
+### Feedback Decision Table
+
+| Feedback pattern | Don't | Do |
+|------------------|-------|-----|
+| Reviewer flags a real bug with `file:line` | Argue defensively | Fix it — one item, tested |
+| Reviewer says "this is wrong" without evidence | Agree reflexively to seem responsive | Verify against the code first; implement only if correct |
+| Suggestion that adds scope beyond the spec | Implement to please the reviewer | Push back: out of scope / YAGNI; ask the user if unsure |
+| External feedback conflicts with a prior decision | Silently override the decision | Surface the conflict to the user before acting |
+| Feedback you don't understand | Guess at the intent and change something | Restate it in your own words and ask before acting |
+
+## Gotchas
+
+- **Resist "Critical" inflation.** Tagging style nits as Critical drowns out the real must-fix issues. Reserve Critical for bugs, security holes, data loss, and broken functionality.
+- **Large diffs get shallow reviews.** If the milestone diff is too large for one pass, review per-task or split the scope explicitly rather than letting the reviewer skim.

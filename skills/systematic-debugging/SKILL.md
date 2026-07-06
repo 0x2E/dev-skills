@@ -5,20 +5,12 @@ description: "Use when encountering any bug, test failure, or unexpected behavio
 
 # Systematic Debugging
 
-**Core principle: Find root cause before attempting fixes. Symptom fixes are failure.**
+**Find root cause before attempting fixes. Symptom fixes are failure.**
 
 ## Iron Law
 
 1. **No automatic fixes.** Never implement a fix without the user's explicit approval.
 2. **No fixes without root cause investigation first.** If you haven't completed Phase 1, you cannot propose fixes.
-
-## When to Use
-
-Use for ANY technical issue: test failures, bugs, unexpected behavior, performance problems, build failures.
-
-**Especially when:** under time pressure, "just one quick fix" seems obvious, you've already tried multiple fixes, previous fix didn't work, you don't fully understand the issue.
-
-**Don't skip when:** issue seems simple, you're in a hurry, someone wants it fixed NOW (systematic is faster than thrashing).
 
 ## The Five Phases
 
@@ -75,9 +67,17 @@ If you catch yourself thinking any of these, stop and return to root cause inves
 - "Let me just fix it directly" — never implement a fix without presenting the conclusion and fix plan to the user first
 - "One more fix attempt" (after 2+ failures) — 3+ failures signals an architectural problem, not a debugging one
 
+## Gotchas
+
+- **Caching masks the real state.** Build caches (Vite/Webpack), module caches (`node_modules`, `__pycache__`, `.gradle`), Docker layers, and browser caches can serve stale code — making a fix look ineffective or a bug appear intermittent. After a fix that "didn't work," rule out a stale cache before forming a new hypothesis.
+- **Flaky locally, consistent in CI (or vice versa) usually means a race or an environment delta.** Suspect: timing/ordering between tests, different dependency versions, missing env vars, or a test polluter that runs earlier in the CI shard.
+- **A green test does not prove the code works.** Over-mocked tests assert the mock's behavior, not the system's. A bug can hide behind a passing test — check that the test exercises real behavior.
+- **Silent failures are worse than loud ones.** Swallowed exceptions, caught-and-ignored promises, and `|| defaultValue` fallthroughs erase the evidence. Re-surface them temporarily to find the source.
+- **Log to stderr, not the app logger, when debugging in tests.** Application loggers are often muted in test runs; use `console.error`/stderr so output appears. When a call chain can't be traced by reading code, capture `new Error().stack` *before* the operation to name the triggering caller.
+
 ## When Process Reveals No Root Cause
 
-If systematic investigation reveals the issue is truly environmental, timing-dependent, or external (rare: ~5% of cases):
+If systematic investigation reveals the issue is truly environmental, timing-dependent, or external:
 1. Document what you investigated.
 2. Implement appropriate handling (retry, timeout, error message).
 3. Add monitoring/logging for future investigation.

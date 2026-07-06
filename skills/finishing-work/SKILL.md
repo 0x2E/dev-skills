@@ -84,7 +84,7 @@ Return to main repo root, checkout <base-branch>, pull, merge <feature-branch>. 
 
 #### Option 2: Push and Create PR
 
-`git push -u origin <feature-branch && gh pr create`. Do NOT clean up worktree — the user needs it for PR iteration.
+`git push -u origin <feature-branch> && gh pr create`. Do NOT clean up worktree — the user needs it for PR iteration.
 
 #### Option 3: Keep As-Is
 
@@ -114,5 +114,10 @@ Only if in a git worktree: return to main repo root, run `git worktree remove <p
 - Never delete work without typed "discard" confirmation.
 - Never clean up worktree for Option 2 (user needs it for PR iteration).
 - Never run `git worktree remove` from inside the worktree being removed.
+
+## Gotchas
+
+- **`gh pr create` fails opaquely when unauthenticated.** Run `gh auth status` first; an auth problem surfaces as a vague error rather than a clear "log in" prompt.
+- **Base branch can be `main` or `master`.** `git merge-base HEAD main` fails on older repos — fall back to `master` before asking the user.
 
 This is the terminal phase of the workflow chain. After completion, report the outcome to the user. No further skill is invoked.

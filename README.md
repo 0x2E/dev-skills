@@ -1,6 +1,6 @@
 # dev-skills
 
-Skills for AI coding assistants. The core is a tightly-coupled workflow chain for structured development (applicable to any task requiring analysis, planning, and systematic execution); standalone skills handle on-demand work like documentation governance. Inspired by [Superpowers](https://github.com/obra/superpowers).
+Skills for AI coding assistants. The core is a tightly-coupled workflow chain for structured development (applicable to any task requiring analysis, planning, and systematic execution); standalone skills handle on-demand work like documentation governance.
 
 ## Philosophy
 
@@ -23,7 +23,7 @@ The collection spans two categories: **workflow skills** that form a self-drivin
 | `test-driven-development` | Red-Green-Refactor cycle, invoked on-demand by executing-plans |
 | `verifying-completion` | Run commands → see output → then claim completion |
 | `reviewing-code` | Dispatch reviewer → structured report + handle feedback |
-| `finishing-work` | Verify tests → merge/PR/keep/discard options → cleanup |
+| `finishing-work` | Integration decision: merge, PR, keep, or discard |
 | `systematic-debugging` | Root cause investigation → hypothesis → minimal fix |
 
 ### Standalone Skills
@@ -34,11 +34,18 @@ The collection spans two categories: **workflow skills** that form a self-drivin
 
 ## Default Workflow
 
-```
-using-devflow → brainstorming → planning → executing-plans → finishing-work
-                                               (per-task verifying-completion,
-                                                per-milestone reviewing-code,
-                                                final global reviewing-code)
+```mermaid
+flowchart LR
+    A[using-devflow] --> B[brainstorming]
+    B --> C[planning]
+    C --> D[executing-plans]
+    D --> E[finishing-work]
+    D -.->|per task| F[verifying-completion]
+    D -.->|per milestone + final| G[reviewing-code]
 ```
 
 using-devflow auto-drives the chain without per-step confirmations. `systematic-debugging` and `reviewing-code` can also be invoked independently.
+
+## Acknowledgments
+
+Inspired by [Superpowers](https://github.com/obra/superpowers).

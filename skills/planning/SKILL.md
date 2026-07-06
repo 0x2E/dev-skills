@@ -31,7 +31,7 @@ If neither a file nor conversation context contains a design:
 - Ask the user: "What should this implementation achieve? Describe the scope, key features, and constraints."
 
 ### 2. Decompose
-Break the design into modules and tasks. Identify natural grouping boundaries (e.g., data layer → API layer → frontend). These become milestones.
+Break the design into modules and tasks. Identify natural grouping boundaries (e.g., data layer → API layer → frontend). These become milestones. Each milestone should produce a testable, reviewable increment. Aim for 2-5 tasks per milestone.
 
 ### 3. Analyze Dependencies
 For each task, determine:
@@ -41,41 +41,15 @@ For each task, determine:
 
 ### 4. Determine Execution Mode
 
-For each task, classify its nature and determine the execution mode:
-
-| Signal | Type | Execution Mode |
-|--------|------|----------------|
-| Database schema, ORM models, data access | Backend Logic | Subagent |
-| REST/GraphQL endpoints, services | Backend Logic | Subagent |
-| Auth, validation, business rules | Backend Logic | Subagent |
-| Utility functions, data transforms | Logic / Utility | Subagent |
-| React/Vue components, pages, layouts | Frontend UI | Subagent |
-| CSS/styling changes | Frontend UI | Subagent |
-| Config files, dependency updates | Config / Infra | Subagent |
-| Refactoring without behavior change | Refactor | Subagent |
-| Small bug fix or trivial change | Trivial | Main Session |
-
-**Execution mode guidance:**
-- **Subagent** (default): The recommended execution mode for most tasks. Subagents provide isolated context and prevent pollution of the main session. Dispatched via executing-plans.
-- **Main Session**: Only for trivial single-line changes or purely conversational/informational tasks.
+**Subagent** is the default for all tasks. Use **Main Session** only for trivial single-line changes or purely conversational tasks.
 
 ### 5. Determine Testing Strategy
 
-Decide which tasks warrant TDD (test-driven development).
-
-| Task Type | TDD Recommended? |
-|-----------|------------------|
-| Backend logic (data, API, auth, validation, business rules) | Yes |
-| Logic / Utility functions, data transforms | Yes |
-| Frontend UI components, pages, layouts | No |
-| CSS/styling changes | No |
-| Config files, dependency updates | No |
-| Refactoring without behavior change | No |
-| Small bug fix or trivial change | No |
+Apply TDD to tasks with testable logic (backend, utilities, data transforms). Skip TDD for pure UI, styling, config, refactoring without behavior change, and trivial changes.
 
 ### 6. Commit Discipline
 
-After each milestone is fully complete (all tasks pass), commit the changes before starting the next milestone. This keeps the history clean and makes it easy to revert a milestone if needed.
+After each milestone is fully complete (all tasks pass), commit the changes before starting the next milestone.
 
 Present the proposed execution strategy to the user for confirmation. The user can adjust individual task strategies.
 
@@ -89,6 +63,10 @@ Produce a structured task list:
 
 ## Implementation Plan
 
+### Global Constraints
+[Rules binding EVERY task — version floors, dependency limits, naming, error/copy conventions, exact values. Copy verbatim so they reach every downstream implementer/reviewer; do not paraphrase. Omit when none apply.]
+- {e.g. Node >= 18; all error responses shaped {error:{code,message}}; no new deps without approval}
+
 ### Execution Strategy
 - Execution mode: Subagent (default) / Mixed
 - TDD: See task annotations
@@ -96,7 +74,7 @@ Produce a structured task list:
 - Review: Milestone checkpoint reviews + final global review
 
 ### Milestone 1: {name}
-- Task 1.1: {description} [depends on: none] [mode: subagent] [tdd: yes]
+- Task 1.1: {description} [depends on: none] [mode: subagent] [tdd: yes] [produces: {contract}] [consumes: {contract}]
 - Task 1.2: {description} [depends on: Task 1.1] [mode: subagent] [tdd: no]
 
 ### Milestone 2: {name}
@@ -105,17 +83,11 @@ Produce a structured task list:
 ```
 
 Each task should:
-- Be small enough to complete in one session
+- Be sized to earn its own test cycle and a reviewer's pass — fold setup, config, and docs into the task that needs them rather than splitting them into standalone tasks
 - Have clear acceptance criteria (implied or explicit)
 - Note dependencies clearly
 - Note execution mode and TDD applicability
-
-## Milestone Grouping Principles
-
-- Group by architectural layer (data, API, UI)
-- Group by functional module (auth, billing, dashboard)
-- Each milestone should produce a testable, reviewable increment
-- 2-5 tasks per milestone is a good range
+- When a task exposes a contract a neighbor relies on, annotate it with `[produces: ...]`; when it depends on a neighbor's contract, `[consumes: ...]` (omit on trivial tasks)
 
 ## Next Step
 

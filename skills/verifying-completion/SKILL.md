@@ -5,6 +5,8 @@ description: "Use before claiming any task is complete, fixed, or passing — ru
 
 # Verifying Completion
 
+Run actual verification commands and confirm output before making any completion, fix, or pass claim.
+
 **Iron rule: No completion claim without fresh verification evidence.**
 
 If you haven't run the verification command in this message, you cannot claim it passes.
@@ -36,3 +38,8 @@ Before claiming any status:
 - Expressing satisfaction before verification ("Done!", "Fixed!", "Great!")
 - Trusting previous runs or extrapolation
 - Relying on partial verification
+
+## Gotchas
+
+- **Trust the exit code, not the prose.** Some tools print "PASS" but exit non-zero (warnings counted as failures); others print errors yet exit 0. Read both the exit code and the failure count, not the success-looking text.
+- **Beware watch/cached output.** Output captured from a `--watch` process or a cached run may reflect a prior state. Use a fresh one-shot invocation to verify.
