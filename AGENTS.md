@@ -16,35 +16,42 @@ All project files, skills, and documentation are written in English.
 
 ## Skill Authoring
 
-### Core Philosophy
+A skill guides action; it never explains concepts the model already knows.
 
-- **Skills guide action, not explain knowledge.** A skill is a set of
-  explicit process, norms, and constraints that direct the agent's
-  actions. Never explain concepts the agent already knows (e.g., what
-  TDD is, how to debug, what makes a good commit message).
-- **Naming a concept as a requirement is not explaining it.** "Apply
-  YAGNI", "follow Red-Green-Refactor" are constraints — keep. "YAGNI
-  means...", "Red-Green-Refactor is a cycle where..." are explanations
-  — cut.
-- **A skill contains only two things:** (1) *discipline* — gates the
-  agent would otherwise skip, plus known concepts it wouldn't activate
-  unprompted, surfaced as requirements; (2) *glue* — workflow handoffs,
-  output formats, and dispatch protocols the agent can't infer.
-  Everything else is re-teaching and gets deleted.
-- **Per-line test:** does this line guide an action, or explain a
-  concept? Only guiding survives.
+### Content types — a skill may contain only these four
 
-### Best Practices
+Each cures one failure mode — test every line: *which failure mode does it cure?* None → delete.
 
-- **Gates must be checkable and unambiguous** — binary conditions
-  independent of model and harness (no `ultrathink`-style tokens, no
-  harness-specific frontmatter assumptions). Vague gates diverge across
-  models and runs.
-- **Conciseness is mandatory.** Every sentence must change the agent's
-  behavior. Run the no-op test sentence by sentence; delete what fails.
-- **Descriptions carry what + when.** Front-load trigger terms so the
-  right skill fires; name the specific activation contexts.
-- **Progressive disclosure.** Keep SKILL.md focused; push detail to
-  reference files one level deep, never chained.
-- **Gerund naming**, consistent across the collection (`reviewing-code`,
-  `executing-plans`, `verifying-completion`).
+| Type | Cures | What you write |
+|------|-------|----------------|
+| **Cue** | Model knows a concept but won't activate it unprompted | Name it as a requirement ("apply Occam's razor") — never define it |
+| **Procedure** | Model can do each step, but would pick an unstable sequence or approach | Fix the steps and the choices ("decompose into independent units → subagent → verify → next") |
+| **Conventions** | Model can't derive project/harness-specific facts | State verbatim (paths, commands, naming, dispatch protocols, output formats) |
+| **Gate** | Model knows what to do but skips it under momentum | Block forward progress until a checkable condition is met with evidence |
+
+**Forbidden: Explanation.** Re-teaching what the model already knows cures
+no failure mode and changes no behavior. Knowledge gaps are solved by
+external fetch (MCP, knowledge base, other skills), never by in-skill
+re-teaching. Defining a term the model can't know (a project-local
+concept) is Conventions, not Explanation — the ban targets re-teaching
+*general* knowledge the model already has.
+
+### Authoring rules
+
+- Gates must be checkable and unambiguous — binary conditions independent
+  of model and harness (no `ultrathink`-style tokens, no harness-specific
+  frontmatter assumptions). Vague gates diverge across models and runs.
+- **Each skill answers for itself alone** — its content covers its own
+  phase, not how other skills in the chain behave. Do not restate,
+  anticipate, or coordinate with other skills' content; cross-skill
+  coupling makes the collection unmaintainable. State every constraint
+  your own flow needs inline — deferring to another skill breaks when it
+  isn't loaded. A handoff names the successor; it does not prescribe the
+  successor's internals.
+- Descriptions carry what + when — front-load trigger terms so the right
+  skill fires; name the specific activation contexts.
+- Progressive disclosure — keep SKILL.md focused; push detail to a
+  reference file one level deep, never chained.
+- Naming — prefer gerunds (`reviewing-code`, `executing-plans`,
+  `verifying-completion`); keep established domain terms in their
+  canonical form (`test-driven-development`).
