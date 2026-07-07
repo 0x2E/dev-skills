@@ -104,13 +104,7 @@ After each milestone and after all milestones complete, dispatch two-stage revie
 | **Checkpoint** (per milestone) | Diff between milestone's first and last commit |
 | **Final global** (all milestones) | Diff between feature branch HEAD and base branch |
 
-Review flow:
-1. **Stage 1**: Dispatch spec compliance reviewer (scope = diff + relevant spec)
-2. If spec compliance fails → implementer fixes → re-review (max one round). Do NOT proceed to Stage 2 until Stage 1 passes.
-3. **Stage 2**: Dispatch code quality reviewer (scope = diff)
-4. If code quality fails → implementer fixes → re-review (max one round)
-5. If issues remain after re-review on either stage, fix what can be fixed, note remaining issues, and proceed
-6. Checkpoint review passes → continue to next milestone. Final review passes → proceed to final verification
+If reviewing-code reports issues, dispatch an implementer to fix them, then re-run reviewing-code. Proceed to the next milestone (checkpoint) or to final verification (final) only after reviewing-code passes.
 
 ## Final Verification
 
