@@ -32,10 +32,11 @@ Present the design to the user section by section. After each section, check if 
 
 ### 5. Self Review
 Before finalizing, review the design internally:
-- Any placeholders, TODOs, or vague requirements?
-- Any internal contradictions?
-- Is the scope focused enough?
-- Could any requirement be interpreted two ways? If so, make it explicit.
+- Resolve placeholders, TODOs, and vague requirements.
+- Resolve internal contradictions.
+- Tighten scope to what is essential.
+- Disambiguate any requirement open to two readings.
+- Remove transient content (implementation progress, todos, status tracking, phase plans).
 
 Fix issues before presenting to the user.
 
@@ -68,6 +69,8 @@ Rules:
 Ask the user to confirm or adjust the default scheme. Once confirmed, write the conventions to AGENTS.md so future sessions won't need to re-ask.
 
 If the project has no AGENTS.md, suggest creating one.
+
+**Content discipline.** Long-lived docs hold only enduring truths: system behavior, decision rationale, requirements, constraints, interfaces. Transient content — implementation progress, TODO/task lists, status checkboxes, phase or milestone plans, next steps — belongs in the plan or issue tracker, not here. Reject trigger words: `Phase 1`, `TODO`, `✓ done`, task list.
 
 Then:
 - Generate the long-lived doc: **Spec** (feature specifications), **PRD** (product requirements), or **ADR** (architecture decisions) depending on context
