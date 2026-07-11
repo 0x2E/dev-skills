@@ -92,12 +92,9 @@ For minimal-design tasks (bug fix, config change, trivial):
 
 ### Over-Engineering Check
 
-Before proceeding to planning, ask the user:
+After documentation is produced, invoke `simplifying-architecture` to check the design for over-engineering. This is a fixed review step — do not ask the user whether to run it.
 
-> "Do you want to check this design for over-engineering?"
-
-If yes → invoke `simplifying-architecture`. After it completes, proceed to Next Step.
-If no → proceed to Next Step.
+If no findings, proceed to Next Step. If findings are presented, the user selects which to act on per the skill's process.
 
 ## Next Step
 

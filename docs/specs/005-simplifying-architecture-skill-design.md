@@ -93,23 +93,23 @@ Add entry with triggers: "Simplify this", "Is this over-engineered?", "Too compl
 
 ### brainstorming checkpoint
 
-After design documentation is produced (Step 6), before Next Step: fixed step asking the user whether to run an over-engineering check. Not a vague "if the design is complex" condition — always asks.
+After design documentation is produced (Step 6), before Next Step: automatically invokes `simplifying-architecture`. Not a vague "if the design is complex" condition, not an opt-in question — a fixed review step that always runs.
 
 ### executing-plans checkpoint
 
-After final global review passes, before Final Verification: fixed step asking the user whether to run an over-engineering check.
+After final global review passes, before Final Verification: automatically invokes `simplifying-architecture`. A fixed review step that always runs — not an opt-in question.
 
 ### reviewing-code: no change
 
-reviewing-code already handles code quality in its review. Over-engineering systematic analysis is simplifying-architecture's job. The checkpoint is placed in executing-plans (which controls the flow) rather than reviewing-code (which is invoked at both milestone and final points — asking at every milestone would be too frequent).
+reviewing-code already handles code quality in its review. Over-engineering systematic analysis is simplifying-architecture's job. The checkpoint is placed in executing-plans (which controls the flow) rather than reviewing-code (which is invoked at both milestone and final points — running at every milestone would be too frequent).
 
 ## Deliberate Decisions
 
 1. **Identification only, no implementation.** Phase 5 (Simplify) was removed to avoid overlap with planning/executing-plans. The skill presents findings and chains to planning. This keeps the skill focused and avoids duplicating the implementation workflow.
-2. **Fixed checkpoints, not vague conditions.** Original proposal had "if the design has significant complexity, optionally invoke..." — this is not a checkable gate (model judgment varies). Changed to: always ask the user. The ASK is deterministic; the user's answer determines whether to proceed.
+2. **Automatic checkpoints, not vague conditions or opt-in questions.** Original proposal had "if the design has significant complexity, optionally invoke..." — this is not a checkable gate (model judgment varies). Changed to: automatically invoke `simplifying-architecture` as a fixed review step. The user does not opt in; the check always runs. If no findings, the flow continues uninterrupted.
 3. **Pattern checklist over theoretical framework.** Ousterhout's deep modules would require Explanation content. Pattern checklist as Cues activates existing knowledge without re-teaching. The deletion test provides the validation rigor that the framework would otherwise provide.
 4. **Deletion test as the key differentiator.** Without it, the skill would just be "find things that look complex" — subjective and inconsistent. The deletion test turns simplification proposals into binary validated findings. It also prevents the skill's own failure mode: suggesting harmful simplifications that remove useful abstractions.
-5. **Checkpoint in executing-plans, not reviewing-code.** reviewing-code fires at both milestone checkpoints and final review. Placing the over-engineering check there would ask at every milestone — too frequent. executing-plans controls the flow and can place the check only after the final review.
+5. **Checkpoint in executing-plans, not reviewing-code.** reviewing-code fires at both milestone checkpoints and final review. Placing the over-engineering check there would run at every milestone — too frequent. executing-plans controls the flow and can place the check only after the final review.
 6. **Do not manufacture findings.** If the deletion test passes for everything, the skill reports the architecture is appropriate. This prevents the skill from justifying its own existence by inventing problems.
 
 ## Files to Create / Modify

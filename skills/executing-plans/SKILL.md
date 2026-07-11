@@ -108,12 +108,9 @@ If reviewing-code reports issues, dispatch an implementer to fix them, then re-r
 
 ## Over-Engineering Check
 
-After the final global review passes, ask the user:
+After the final global review passes, invoke `simplifying-architecture` to check the implementation for over-engineering. This is a fixed review step — do not ask the user whether to run it.
 
-> "Do you want to check the implementation for over-engineering?"
-
-If yes → invoke `simplifying-architecture`. After it completes, proceed to Final Verification.
-If no → proceed to Final Verification.
+If no findings, proceed to Final Verification. If findings are presented, the user selects which to act on per the skill's process, then invoke `planning` for the selected findings.
 
 ## Final Verification
 
