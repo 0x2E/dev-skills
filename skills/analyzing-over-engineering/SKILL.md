@@ -1,5 +1,5 @@
 ---
-name: simplifying-architecture
+name: analyzing-over-engineering
 description: "Use when checking code or design for over-engineering, unnecessary complexity, or redundant abstraction layers — scans for patterns, validates findings, and presents prioritized simplification proposals"
 ---
 
