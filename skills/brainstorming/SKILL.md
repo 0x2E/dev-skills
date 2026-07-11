@@ -90,6 +90,12 @@ For minimal-design tasks (bug fix, config change, trivial):
 - **Tell the user why**: briefly explain the reason for not persisting (e.g., "This is a small bug fix, so the design will stay in conversation context rather than writing a spec file.")
 - Pass the summary forward to planning as an inline description (no file written)
 
+### Over-Engineering Check
+
+After documentation is produced, invoke `analyzing-over-engineering` to check the design for over-engineering.
+
+If no findings, proceed to Next Step. If findings are presented, the user selects which to act on per the skill's process.
+
 ## Next Step
 
 After the design is confirmed and documentation is produced (whether persisted to file or kept in conversation context), invoke the `planning` skill immediately. Do NOT start implementing. Do NOT explore the codebase further. The only valid next action after completing brainstorming is loading the planning skill.

@@ -106,6 +106,12 @@ After each milestone and after all milestones complete, dispatch two-stage revie
 
 If reviewing-code reports issues, dispatch an implementer to fix them, then re-run reviewing-code. Proceed to the next milestone (checkpoint) or to final verification (final) only after reviewing-code passes.
 
+## Over-Engineering Check
+
+After the final global review passes, invoke `analyzing-over-engineering` to check the implementation for over-engineering.
+
+If no findings, proceed to Final Verification. If findings are presented, the user selects which to act on per the skill's process, then invoke `planning` for the selected findings.
+
 ## Final Verification
 
 After the final global review passes, run the full verification suite before claiming completion:
