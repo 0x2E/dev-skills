@@ -1,6 +1,6 @@
 ---
 name: simplifying-architecture
-description: "Use when checking code or design for over-engineering, unnecessary complexity, or redundant abstraction layers — scans for over-engineering patterns, validates each via a deletion test, and presents findings. Identifies only; does not implement changes"
+description: "Use when checking code or design for over-engineering, unnecessary complexity, or redundant abstraction layers — scans for patterns, validates findings, and presents prioritized simplification proposals"
 ---
 
 # Simplifying Architecture
