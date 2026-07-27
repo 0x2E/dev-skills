@@ -17,15 +17,11 @@ Before starting, you must have:
 
 ### Step 1: Verify Tests
 
-Run the project's test suite before offering options:
+Identify and run the project's verification command(s) (tests required; include lint/build if the repo uses them). Fresh run in this turn — no completion claim without evidence.
 
-```bash
-npm test / cargo test / pytest / go test ./...
-```
+If verification fails: report failures with evidence. Cannot proceed with merge/PR until it passes. Stop.
 
-If tests fail: report failures. Cannot proceed with merge/PR until tests pass. Stop.
-
-If tests pass: continue to Step 2.
+If verification passes: continue to Step 2.
 
 ### Step 2: Detect Environment
 

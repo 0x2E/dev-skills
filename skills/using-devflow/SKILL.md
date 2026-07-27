@@ -24,6 +24,7 @@ Entry point for the dev-skills system. Routes user intent to the right skill and
 | `verifying-completion` | "Am I done?", "Is this ready?" | Run commands → verify output → claim complete |
 | `systematic-debugging` | "This bug", "Fix this error", "Why is this failing", "Tests are failing", "Build broke", "Something crashed", "Debug this", "Performance issue", any error/failure/exception scenario | Root cause investigation → hypothesis → minimal fix |
 | `test-driven-development` | "add tests", "write a test", "TDD", any implementation with test coverage | Red-Green-Refactor cycle — also invoked internally by executing-plans |
+| `curating-docs` | "Organize docs", "Docs are a mess", "Documentation chaos", "Standardize project docs" | Survey docs → convention → reorg + content health |
 
 When a user request matches the trigger column, load the corresponding skill immediately — no pre-research.
 
@@ -48,4 +49,4 @@ These thoughts mean STOP — you are about to waste tokens and duplicate work. L
 - Do NOT describe the workflow chain as a plan. Load the first skill and let it drive.
 - When encountering any error, test failure, crash, build break, or unexpected behavior — load `systematic-debugging` immediately, do not attempt ad-hoc fixes.
 - The user can interrupt at any time — say "stop", "skip to planning", "just do X", etc.
-- **Before modifying any code** — no matter how small the issue, requirement, or change — present the approach/solution plan and wait for user confirmation before executing. The only exception is when the user has explicitly requested or authorized skipping confirmation.
+- **Unplanned code changes need confirmation.** Before modifying code when no confirmed plan or user-approved fix is in force, present the approach and wait. Mid-execution of a confirmed plan, or an already-approved debug fix, does not re-ask per edit. Exception: user explicitly authorized skipping confirmation.

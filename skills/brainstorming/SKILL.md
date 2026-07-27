@@ -22,7 +22,7 @@ Ask questions one at a time, waiting for feedback before the next. Prefer multip
 - **Drill into dependencies, don't pre-enumerate**: during clarification, if the current question depends on another not-yet-settled decision or fact, go resolve that dependency first, then return to the original question. You don't need to list all decisions upfront — drill in only when you hit a dependency.
 - **Don't let vagueness pass**: when an answer contains vague terms ("roughly", "flexible", "it depends") or words open to multiple readings, keep probing until concrete — specific values, scenarios, counterexamples, boundaries. Never silently substitute your own assumption for a decision the user hasn't made. There is no objective "done" threshold here — keep probing until the user confirms a shared understanding of the requirements.
 
-Focus on: purpose, constraints, success criteria. Apply YAGNI ruthlessly — cut anything not essential to the core goal.
+Focus on: purpose, constraints, success criteria. Apply YAGNI ruthlessly — cut anything not essential to the core goal. Prefer concrete, testable success criteria over open-ended quality adjectives.
 
 ### 3. Explore Approaches
 Propose 2-3 approaches with trade-offs and a recommendation. Lead with the recommended option and explain why.

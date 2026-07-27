@@ -16,6 +16,9 @@ this document describes only how the chain is structured and how it runs.
 - **Stability from gates, not bulk** — checkpoints placed where the
   agent reliably slips (verify, review, debug, plan-confirm); minimal
   instruction elsewhere.
+- **Unhobble over constrain** — prefer judgement Cues and interfaces
+  over absolute style rules; avoid conflicting preferences across skills
+  and with the user's project config. Authoring detail lives in `AGENTS.md`.
 - **Loose coupling** — each skill owns its phase; one can be rewritten
   without re-architecting the chain.
 

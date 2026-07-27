@@ -79,10 +79,7 @@ Craft the implementer prompt with these elements:
 - Return: summary of changes + issues encountered + verification result + commit SHA (if committed)
 ```
 
-### Prompt Crafting Principles
-
-- **Essential context upfront**: subagent receives task description, design context, file paths, and acceptance criteria. It does NOT need to read the full plan/spec.
-- **Self-gather for details**: the subagent should read source files, explore the codebase, and look up conventions on its own as needed. The parent does not need to pre-package every file.
+Fill the template above; do not pre-package file contents the subagent can read itself. Point at paths and acceptance evidence instead.
 
 ## Handling Implementer Status
 
@@ -92,7 +89,7 @@ When an implementer subagent returns:
 |--------|--------|
 | **Done** | Proceed to verifying-completion |
 | **Needs context** | Provide the missing info (or point to the file to read) and re-dispatch. Do not pre-read and summarize unless the subagent explicitly needs interpretation |
-| **Blocked** | The plan should have resolved all blockers. If genuinely blocked by an unforeseen issue, assess and resolve — provide more context, break the task down, or adjust the approach. Do not escalate to human. |
+| **Blocked** | Assess and resolve first — more context, smaller task, or adjusted approach. If still blocked after that, surface to the user with what was tried and what is missing. |
 | **Concerns raised** | Read concerns, address if critical, otherwise note and proceed |
 
 ## Review Gates

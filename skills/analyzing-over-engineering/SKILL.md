@@ -34,15 +34,15 @@ If input is unclear, ask the user what to review.
 
 Run **both** methods. Neither alone is sufficient.
 
-**Pattern checklist** — check for each:
+**Pattern checklist** — check for each (apply the named concept; do not re-teach it):
 
-- **Premature abstraction** — abstraction created before Rule of Three is met
-- **Speculative generality** — flexibility built for hypothetical future needs
-- **Pass-through layers** — modules / functions that only forward calls
-- **Over-configuration** — values externalized as config that never change
-- **Shallow module** — interface complexity ≈ implementation complexity
-- **Unused extensibility** — parameters, hooks, options with no consumer
-- **Framework-for-one** — general framework built for a single use case
+- Premature abstraction
+- Speculative generality
+- Pass-through layers
+- Over-configuration
+- Shallow module
+- Unused extensibility
+- Framework-for-one
 
 **Friction exploration** — walk the code / design as a new reader. Note where:
 

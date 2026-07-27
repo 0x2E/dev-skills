@@ -69,11 +69,13 @@ If you catch yourself thinking any of these, stop and return to root cause inves
 
 ## Gotchas
 
-- **Caching masks the real state.** Build caches (Vite/Webpack), module caches (`node_modules`, `__pycache__`, `.gradle`), Docker layers, and browser caches can serve stale code — making a fix look ineffective or a bug appear intermittent. After a fix that "didn't work," rule out a stale cache before forming a new hypothesis.
-- **Flaky locally, consistent in CI (or vice versa) usually means a race or an environment delta.** Suspect: timing/ordering between tests, different dependency versions, missing env vars, or a test polluter that runs earlier in the CI shard.
-- **A green test does not prove the code works.** Over-mocked tests assert the mock's behavior, not the system's. A bug can hide behind a passing test — check that the test exercises real behavior.
-- **Silent failures are worse than loud ones.** Swallowed exceptions, caught-and-ignored promises, and `|| defaultValue` fallthroughs erase the evidence. Re-surface them temporarily to find the source.
-- **Log to stderr, not the app logger, when debugging in tests.** Application loggers are often muted in test runs; use `console.error`/stderr so output appears. When a call chain can't be traced by reading code, capture `new Error().stack` *before* the operation to name the triggering caller.
+Before a new hypothesis, rule these out when they fit the symptoms:
+
+- Stale caches (build, module, Docker, browser) after a "fix that didn't work"
+- Local/CI delta (timing, dependency versions, env vars, test order/pollution)
+- Over-mocked green tests that never exercise the failing path
+- Swallowed errors / silent defaults erasing evidence — re-surface temporarily
+- Test runs muting app loggers — log to stderr; capture stack at the trigger if the call chain is opaque
 
 ## When Process Reveals No Root Cause
 

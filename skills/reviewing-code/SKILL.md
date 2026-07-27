@@ -5,7 +5,7 @@ description: "Use before merging or after milestones — two-stage review: spec 
 
 # Reviewing Code
 
-Two-stage review after each task or milestone: first verify the code matches the spec, then evaluate code quality. Fixing is delegated back to executing-plans.
+Two-stage review after each milestone (or on demand): first verify the code matches the spec, then evaluate code quality. Fixing is delegated back to executing-plans.
 
 ## Triggers
 

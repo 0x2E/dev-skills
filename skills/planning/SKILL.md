@@ -49,7 +49,7 @@ Apply TDD to tasks with testable logic (backend, utilities, data transforms). Sk
 
 ### 6. Commit Discipline
 
-After each milestone is fully complete (all tasks pass), commit the changes before starting the next milestone.
+Default in the plan: commit after each milestone completes. Execution may tighten cadence (e.g. per-task in a worktree) from the git environment — record only this default here; do not invent a second policy that conflicts with execution.
 
 Present the proposed execution strategy to the user for confirmation. The user can adjust individual task strategies.
 
@@ -70,7 +70,7 @@ Produce a structured task list:
 ### Execution Strategy
 - Execution mode: Subagent (default) / Mixed
 - TDD: See task annotations
-- Commit: After each milestone completes, commit before proceeding to the next
+- Commit: After each milestone (default; execution may tighten from git environment)
 - Review: Milestone checkpoint reviews + final global review
 
 ### Milestone 1: {name}
@@ -84,7 +84,7 @@ Produce a structured task list:
 
 Each task should:
 - Be sized to earn its own test cycle and a reviewer's pass — fold setup, config, and docs into the task that needs them rather than splitting them into standalone tasks
-- Have clear acceptance criteria (implied or explicit)
+- Have clear acceptance criteria — prefer executable or inspectable evidence (test names, commands, `file:line`, existing reference implementations) over open-ended adjectives
 - Note dependencies clearly
 - Note execution mode and TDD applicability
 - When a task exposes a contract a neighbor relies on, annotate it with `[produces: ...]`; when it depends on a neighbor's contract, `[consumes: ...]` (omit on trivial tasks)
